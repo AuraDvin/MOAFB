@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=2]
+
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 197.0
+height = 0.0
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 200, 20 )
+
+[node name="enemy" type="KinematicBody2D"]
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color( 0.882353, 0.32549, 0.32549, 1 )
+polygon = PoolVector2Array( 0, 0, 400, 0, 400, 400, 0, 400 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 203, 196 )
+shape = SubResource( 1 )
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="."]
+position = Vector2( 200, 380 )
+shape = SubResource( 2 )
