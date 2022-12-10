@@ -1,0 +1,105 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Scripts/Player/Player.tscn" type="PackedScene" id=1]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 267, 81 )
+
+[node name="Node2D" type="Node2D"]
+
+[node name="floors" type="Node2D" parent="."]
+
+[node name="floorTIle" type="Node2D" parent="floors"]
+position = Vector2( 51, 38 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="floors/floorTIle"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="floors/floorTIle/StaticBody2D"]
+position = Vector2( -97, 203 )
+shape = SubResource( 1 )
+
+[node name="ColorRect" type="ColorRect" parent="floors/floorTIle/StaticBody2D/CollisionShape2D"]
+margin_left = -264.0
+margin_top = -79.0
+margin_right = 268.0
+margin_bottom = 78.0
+
+[node name="floorTIle5" type="Node2D" parent="floors"]
+position = Vector2( 1735, 420 )
+rotation = -0.560784
+
+[node name="StaticBody2D" type="StaticBody2D" parent="floors/floorTIle5"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="floors/floorTIle5/StaticBody2D"]
+position = Vector2( -97, 203 )
+shape = SubResource( 1 )
+
+[node name="ColorRect" type="ColorRect" parent="floors/floorTIle5/StaticBody2D/CollisionShape2D"]
+margin_left = -264.0
+margin_top = -79.0
+margin_right = 268.0
+margin_bottom = 78.0
+
+[node name="floorTIle4" type="Node2D" parent="floors"]
+position = Vector2( 1407, 563 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="floors/floorTIle4"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="floors/floorTIle4/StaticBody2D"]
+position = Vector2( -97, 203 )
+shape = SubResource( 1 )
+
+[node name="ColorRect" type="ColorRect" parent="floors/floorTIle4/StaticBody2D/CollisionShape2D"]
+margin_left = -264.0
+margin_top = -79.0
+margin_right = 268.0
+margin_bottom = 78.0
+
+[node name="floorTIle2" type="Node2D" parent="floors"]
+position = Vector2( 486, 308 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="floors/floorTIle2"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="floors/floorTIle2/StaticBody2D"]
+position = Vector2( -97, 203 )
+shape = SubResource( 1 )
+
+[node name="ColorRect" type="ColorRect" parent="floors/floorTIle2/StaticBody2D/CollisionShape2D"]
+margin_left = -264.0
+margin_top = -79.0
+margin_right = 268.0
+margin_bottom = 78.0
+
+[node name="floorTIle6" type="Node2D" parent="floors"]
+position = Vector2( 2297, 314 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="floors/floorTIle6"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="floors/floorTIle6/StaticBody2D"]
+position = Vector2( -97, 203 )
+shape = SubResource( 1 )
+
+[node name="ColorRect" type="ColorRect" parent="floors/floorTIle6/StaticBody2D/CollisionShape2D"]
+margin_left = -264.0
+margin_top = -79.0
+margin_right = 268.0
+margin_bottom = 78.0
+
+[node name="floorTIle3" type="Node2D" parent="floors"]
+position = Vector2( 1034, 497 )
+rotation = 0.497994
+
+[node name="StaticBody2D" type="StaticBody2D" parent="floors/floorTIle3"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="floors/floorTIle3/StaticBody2D"]
+position = Vector2( -97, 203 )
+shape = SubResource( 1 )
+
+[node name="ColorRect" type="ColorRect" parent="floors/floorTIle3/StaticBody2D/CollisionShape2D"]
+margin_left = -264.0
+margin_top = -79.0
+margin_right = 268.0
+margin_bottom = 78.0
+
+[node name="Player" parent="." instance=ExtResource( 1 )]
+position = Vector2( -45, -19 )

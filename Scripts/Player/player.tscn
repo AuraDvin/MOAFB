@@ -1,51 +1,133 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=9 format=2]
 
-[ext_resource path="res://Scripts/Player/platformer_character_2d.gd" type="Script" id=1]
+[ext_resource path="res://assets/viking2.png" type="Texture" id=1]
+[ext_resource path="res://Scripts/Player/Player.gd" type="Script" id=2]
 
-[sub_resource type="CircleShape2D" id=1]
-radius = 32.0
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 20.0
+height = 47.994
 
-[sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 32, 32 )
+[sub_resource type="Animation" id=6]
+resource_name = "Fall"
+length = 0.15
+tracks/0/type = "value"
+tracks/0/path = NodePath("../Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ 21, 22 ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "Idle"
+length = 0.44
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("../Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 2, 3, 4, 5, 6 ]
+}
+
+[sub_resource type="Animation" id=4]
+resource_name = "Jump"
+length = 0.14
+tracks/0/type = "value"
+tracks/0/path = NodePath("../Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 19, 20 ]
+}
+
+[sub_resource type="Animation" id=3]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("../Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+
+[sub_resource type="Animation" id=5]
+resource_name = "Run"
+length = 0.54
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("../Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 9, 10, 11, 12, 13, 14 ]
+}
 
 [node name="Player" type="KinematicBody2D"]
-script = ExtResource( 1 )
-max_move_speed = 850.0
-acceleration = 6500.0
-friction = 13000.0
-drag = 10400.0
-jump_power = 1200.0
-gravity = 3200.0
-fall_gravity_modifier = 1.5
-early_jump_end_gravity_modifier = 2.0
-max_fall_speed = 2000.0
-__coyote_timer = NodePath("CoyoteTimer")
-__jump_buffer_clear_timer = NodePath("JumpBufferClearTimer")
+collision/safe_margin = 1.0
+script = ExtResource( 2 )
 
-[node name="shadow" type="Polygon2D" parent="."]
-polygon = PoolVector2Array( -32, -64, 32, -64, 32, 64, -32, 64 )
+[node name="downRay" type="RayCast2D" parent="."]
+modulate = Color( 0.0313726, 0, 1, 1 )
+position = Vector2( 0, 10 )
+enabled = true
+cast_to = Vector2( 0, 80 )
+collide_with_areas = true
 
-[node name="eye" type="Polygon2D" parent="."]
-color = Color( 0, 0, 0, 1 )
-polygon = PoolVector2Array( 12, -49, 26, -49, 26, -35, 12, -35 )
-
-[node name="TopShape" type="CollisionShape2D" parent="."]
-visible = false
-position = Vector2( 0, -32 )
+[node name="capsuleShape" type="CollisionShape2D" parent="."]
+modulate = Color( 0.858824, 0.247059, 0.247059, 1 )
+position = Vector2( 11, 20.997 )
 shape = SubResource( 1 )
-
-[node name="BottomShape" type="CollisionShape2D" parent="."]
-visible = false
-position = Vector2( 0, 32 )
-shape = SubResource( 2 )
-
-[node name="CoyoteTimer" type="Timer" parent="."]
-wait_time = 2.45
-one_shot = true
-
-[node name="JumpBufferClearTimer" type="Timer" parent="."]
-wait_time = 0.15
-one_shot = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
 current = true
+smoothing_enabled = true
+
+[node name="Sprite" type="Sprite" parent="."]
+scale = Vector2( 4, 4 )
+texture = ExtResource( 1 )
+hframes = 9
+vframes = 6
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../capsuleShape")
+anims/Fall = SubResource( 6 )
+anims/Idle = SubResource( 2 )
+anims/Jump = SubResource( 4 )
+anims/RESET = SubResource( 3 )
+anims/Run = SubResource( 5 )
+
+[node name="slopeRayRight" type="RayCast2D" parent="."]
+position = Vector2( 0, 60 )
+enabled = true
+cast_to = Vector2( 50, 0 )
+
+[node name="slopeRayLeft" type="RayCast2D" parent="."]
+position = Vector2( 0, 60 )
+enabled = true
+cast_to = Vector2( -50, 0 )

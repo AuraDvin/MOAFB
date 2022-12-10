@@ -1,4 +1,20 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
+
+[sub_resource type="GDScript" id=3]
+resource_name = "enemy"
+script/source = "extends KinematicBody2D
+
+
+
+
+func _ready():
+	pass 
+
+
+
+func _process(delta):
+	pass
+"
 
 [sub_resource type="CapsuleShape2D" id=1]
 radius = 197.0
@@ -8,6 +24,7 @@ height = 0.0
 extents = Vector2( 200, 20 )
 
 [node name="enemy" type="KinematicBody2D"]
+script = SubResource( 3 )
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
 color = Color( 0.882353, 0.32549, 0.32549, 1 )

@@ -8,16 +8,6 @@
 
 config_version=4
 
-_global_script_classes=[ {
-"base": "KinematicBody2D",
-"class": "PlatformerCharacter2D",
-"language": "GDScript",
-"path": "res://Scripts/Player/platformer_character_2d.gd"
-} ]
-_global_script_class_icons={
-"PlatformerCharacter2D": ""
-}
-
 [application]
 
 config/name="M.O.A.F.B"
