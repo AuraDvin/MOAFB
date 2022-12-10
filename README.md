@@ -11,6 +11,7 @@
     1. Player 🟧
         - Movement (left/right) ✅
         - Jumping - falling ✅
+        - Slopes 🟥
         - mining animation 🟥
         - Hurt animation 🟥
         - Health 🟥
