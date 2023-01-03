@@ -1,16 +1,50 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Scripts/Player/Player.tscn" type="PackedScene" id=1]
+
+[sub_resource type="GDScript" id=2]
+resource_name = "Test"
+script/source = "extends Node2D
+
+
+onready var bullet = preload(\"res://Scripts/Bullet/Bullet.tscn\")
+onready var player = get_node(\"Player\")
+
+const radius: float = 100.0
+const delay: float = 2.0
+
+func _input(event) -> void:
+	if event is InputEventMouseButton:
+		
+		_shoot(event.position, event.get_button_index() == 1)
+
+func _shoot(position:Vector2, spawn: bool) -> void:
+	var mouse_pos = get_global_mouse_position()
+	var player_pos = player.global_transform.origin 
+	var distance = player_pos.distance_to(mouse_pos) 
+	var mouse_dir = (mouse_pos-player_pos).normalized()
+	if distance > radius:
+		mouse_pos = player_pos + (mouse_dir * radius)
+	if (spawn && player.canShoot): 
+		player.canShoot = false
+		player.get_node(\"shootDelay\").start(0)
+		var bulletObject = bullet.instance()
+		bulletObject.init(player_pos)
+		add_child(bulletObject)
+		bulletObject.global_transform.origin = mouse_pos
+		
+"
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 267, 81 )
 
-[node name="Node2D" type="Node2D"]
+[node name="tempScene" type="Node2D"]
+script = SubResource( 2 )
 
 [node name="floors" type="Node2D" parent="."]
 
 [node name="floorTIle" type="Node2D" parent="floors"]
-position = Vector2( 51, 38 )
+position = Vector2( -44, 150 )
 
 [node name="StaticBody2D" type="StaticBody2D" parent="floors/floorTIle"]
 
@@ -24,24 +58,8 @@ margin_top = -79.0
 margin_right = 268.0
 margin_bottom = 78.0
 
-[node name="floorTIle5" type="Node2D" parent="floors"]
-position = Vector2( 1735, 420 )
-rotation = -0.560784
-
-[node name="StaticBody2D" type="StaticBody2D" parent="floors/floorTIle5"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="floors/floorTIle5/StaticBody2D"]
-position = Vector2( -97, 203 )
-shape = SubResource( 1 )
-
-[node name="ColorRect" type="ColorRect" parent="floors/floorTIle5/StaticBody2D/CollisionShape2D"]
-margin_left = -264.0
-margin_top = -79.0
-margin_right = 268.0
-margin_bottom = 78.0
-
 [node name="floorTIle4" type="Node2D" parent="floors"]
-position = Vector2( 1407, 563 )
+position = Vector2( 1020, 464 )
 
 [node name="StaticBody2D" type="StaticBody2D" parent="floors/floorTIle4"]
 
@@ -56,7 +74,7 @@ margin_right = 268.0
 margin_bottom = 78.0
 
 [node name="floorTIle2" type="Node2D" parent="floors"]
-position = Vector2( 486, 308 )
+position = Vector2( 488, 307 )
 
 [node name="StaticBody2D" type="StaticBody2D" parent="floors/floorTIle2"]
 
@@ -71,7 +89,7 @@ margin_right = 268.0
 margin_bottom = 78.0
 
 [node name="floorTIle6" type="Node2D" parent="floors"]
-position = Vector2( 2297, 314 )
+position = Vector2( 1552, 464 )
 
 [node name="StaticBody2D" type="StaticBody2D" parent="floors/floorTIle6"]
 
@@ -80,22 +98,6 @@ position = Vector2( -97, 203 )
 shape = SubResource( 1 )
 
 [node name="ColorRect" type="ColorRect" parent="floors/floorTIle6/StaticBody2D/CollisionShape2D"]
-margin_left = -264.0
-margin_top = -79.0
-margin_right = 268.0
-margin_bottom = 78.0
-
-[node name="floorTIle3" type="Node2D" parent="floors"]
-position = Vector2( 1034, 497 )
-rotation = 0.497994
-
-[node name="StaticBody2D" type="StaticBody2D" parent="floors/floorTIle3"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="floors/floorTIle3/StaticBody2D"]
-position = Vector2( -97, 203 )
-shape = SubResource( 1 )
-
-[node name="ColorRect" type="ColorRect" parent="floors/floorTIle3/StaticBody2D/CollisionShape2D"]
 margin_left = -264.0
 margin_top = -79.0
 margin_right = 268.0
