@@ -11,6 +11,7 @@
     1. Player 🟧
         - Movement (left/right) ✅
         - Jumping - falling ✅
+        - Slopes 🟥
         - mining animation 🟥
         - Hurt animation 🟥
         - Health 🟥
@@ -29,7 +30,7 @@
         - different attacks 🟥
     1. Bosses 🟥
         - really cool and stuff (not required) 🟥
-1. Known issues
+1. ### Known issues
     1. Slopes
     1. Jumping
     1. Using assets from other people's projects
