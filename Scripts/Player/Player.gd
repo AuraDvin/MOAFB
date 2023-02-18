@@ -6,13 +6,14 @@ const MAXFALLSPD = 600
 const MAXSPD = 400
 const JUMPFORCE = 800
 const ACCEL = 40
+const SHOOT_RADIUS: float = 100.00
 
 var motion  =  Vector2()
 var canShoot = true
 
 onready var down_ray = get_node("downRay")
-onready var slope_ray_right = get_node("slopeRayRight")
-onready var slope_ray_left = get_node("slopeRayLeft")
+#onready var slope_ray_right = get_node("slopeRayRight")
+#onready var slope_ray_left = get_node("slopeRayLeft")
 onready var sprite = get_node("Sprite")
 onready var animationPlayer = get_node("AnimationPlayer")
 onready var bullet = preload("res://scripts/bullet/Bullet.tscn")
@@ -73,9 +74,32 @@ func checkFallingAnim(y:int):
 	animationPlayer.play("Jump")
 	return 0
 
-
-
-
 func _on_shootDelay_timeout():
-	print("ready")
+#	print("ready")
 	canShoot = true
+
+func _input(event) -> void:
+	# only check for mouse events 
+	if event is InputEventMouseMotion:
+		# print("mouse moved", event)
+		pass
+	if !(event is InputEventMouseButton) || !canShoot || event.get_button_index() != 1:	
+		return
+	# if (!canShoot):
+	# 	return
+	var mouse_pos = get_global_mouse_position()
+	var distance = global_transform.origin.distance_to(mouse_pos) 
+	var mouse_dir = (mouse_pos - global_transform.origin).normalized()
+	var scene_root = get_tree().get_root()
+
+	if distance > SHOOT_RADIUS:
+		mouse_pos = global_transform.origin + (mouse_dir * SHOOT_RADIUS)
+	
+	if (canShoot): 
+		canShoot = false
+		get_node("shootDelay").start(0)
+	
+	var bullet_instance = bullet.instance()
+	bullet_instance.init(global_transform.origin)		# shouldn't be required for this implementation
+	scene_root.add_child(bullet_instance)
+	bullet_instance.global_transform.origin = mouse_pos

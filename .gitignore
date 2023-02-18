@@ -12,3 +12,6 @@ data_*/
 
 # VSC
 .vscode/
+
+# My custom ignores
+Assets/stolen/

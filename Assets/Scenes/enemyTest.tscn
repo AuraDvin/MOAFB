@@ -1,0 +1,77 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Scripts/Enemy/enemy.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Scripts/Player/Player.tscn" type="PackedScene" id=2]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 267, 81 )
+
+[node name="EnemyTest" type="Node2D"]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -2052.0
+margin_top = -1188.0
+margin_right = 2109.0
+margin_bottom = 1207.0
+color = Color( 0.494118, 0.160784, 0.721569, 1 )
+
+[node name="floorTIle" type="Node2D" parent="."]
+position = Vector2( -44, 150 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="floorTIle"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="floorTIle/StaticBody2D"]
+position = Vector2( -97, 203 )
+shape = SubResource( 1 )
+
+[node name="ColorRect" type="ColorRect" parent="floorTIle/StaticBody2D/CollisionShape2D"]
+margin_left = -264.0
+margin_top = -79.0
+margin_right = 268.0
+margin_bottom = 78.0
+
+[node name="floorTIle2" type="Node2D" parent="."]
+position = Vector2( 490, 150 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="floorTIle2"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="floorTIle2/StaticBody2D"]
+position = Vector2( -97, 203 )
+shape = SubResource( 1 )
+
+[node name="ColorRect" type="ColorRect" parent="floorTIle2/StaticBody2D/CollisionShape2D"]
+margin_left = -264.0
+margin_top = -79.0
+margin_right = 268.0
+margin_bottom = 78.0
+
+[node name="floorTIle3" type="Node2D" parent="."]
+position = Vector2( 180, 316 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="floorTIle3"]
+position = Vector2( -1089, -187 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="floorTIle3/StaticBody2D"]
+position = Vector2( -97, 203 )
+shape = SubResource( 1 )
+
+[node name="ColorRect" type="ColorRect" parent="floorTIle3/StaticBody2D/CollisionShape2D"]
+margin_left = -264.0
+margin_top = -79.0
+margin_right = 268.0
+margin_bottom = 78.0
+
+[node name="Player" parent="." instance=ExtResource( 2 )]
+position = Vector2( -1160, 125 )
+
+[node name="enemy" parent="." instance=ExtResource( 1 )]
+position = Vector2( 125, -305 )
+
+[node name="LevelCam" type="Camera2D" parent="."]
+position = Vector2( 8, 4 )
+current = true
+zoom = Vector2( 2.4, 2.4 )
