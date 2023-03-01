@@ -8,7 +8,7 @@ onready var timer_diss = $MouseDissappear
 func _ready():
 	$Main/Start_Button.grab_focus()
 
-func _process(delta):
+func _process(_delta):
 	pass
 
 func _input(event):
@@ -33,7 +33,8 @@ func _input(event):
 ## 	EVENTS/TRIGGERS AND THINGS
 func _on_Start_Button_pressed():
 	print("pressed start")
-	get_tree().change_scene("res://Assets/Scenes/cave.tscn")
+	var moment = get_tree().change_scene("res://Assets/Scenes/cave.tscn")
+	print(moment)
 
 func _on_Quit_Button_pressed():
 	get_tree().quit()
