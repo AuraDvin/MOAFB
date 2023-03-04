@@ -10,25 +10,29 @@ var motion  =  Vector2()
 var player_location = Vector2()
 var is_moving_left = true
 var location_check = 0
+var should_move = true
 
 onready var level_name = get_tree().get_current_scene().get_name()
 onready var player = get_tree().get_root().get_node_or_null("./" + level_name + "/Player")
+onready var stop_timer = $stopMoving
 
 func _ready():
-	$Sprite.play("default")
-
-
+#	$Sprite.play("default")
+	$AnimatedSprite.play("default")
 
 func _process(delta):
-#	location_check += delta
-#if location_check > 1000:
 	find_player(delta)     # sets is_going_left first
-#location_check = 0
+	
+	if not should_move:
+		$AnimatedSprite.play("default")
+#		print("cant move lol ", Time.get_ticks_msec())
+		return
 	detect_ledge(delta)    # overwrites is_going_left if necessary
-	move_enemy(delta)
+	move_enemy(delta)      # uhu
 	
 
 func move_enemy(_delta):
+	$AnimatedSprite.play("walk")
 	
 	motion.x += -ACCEL if is_moving_left else ACCEL
 	
@@ -45,36 +49,26 @@ func move_enemy(_delta):
 func find_player(_delta):
 	if player == null: # If there is no player in the scene dont do anything
 		return
-	
-	player_location = player.position
-#	if player_location != null:
-#		print (player_location)
-#	is_moving_left = player_location.x <= position.x 
+		
 	var before = is_moving_left
-	
+	player_location = player.position
 	var distance = position.distance_to(player_location)
+
 	if distance > 700:
 		return
-	
 	is_moving_left = player_location.x <= position.x
 	
 	if is_moving_left != before:   
 		print("Changed directions")
 		scale.x = -scale.x
 
-
 func detect_ledge(_delta):
+	
 	if not $edge.is_colliding() and is_on_floor():
-		is_moving_left = !is_moving_left
-#		print("About to fall off")
 		scale.x = -scale.x
-		motion.x *= 0.4
-
-
-func _on_playerCollision_body_entered(body):
-	pass
-#	print("Body entered")
-#	print(body)
+		print("started timer")
+		stop_timer.start()
+		should_move = false
 
 func hit():
 	print("Imagine I hit something")
@@ -84,5 +78,13 @@ func end_hit():
 	print("ok no more hitting")
 	$playerHitter.monitoring = false
 
+func _on_playerCollision_body_entered(body):
+	pass
+#	print("Body entered", body)
 
-
+func _on_stopMoving_timeout():
+#	scale.x = -scale.x
+	is_moving_left = !is_moving_left
+	should_move = true
+	motion.x *= 0.4
+#	print("About to fall off")
