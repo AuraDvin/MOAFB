@@ -1,9 +1,10 @@
 extends Node
 
-export(int) var map_width = 80
-export(int) var map_height = 50
+signal finished_generating
 
 export(String) var world_seed = "some seed idk"
+export(int) var map_width = 80
+export(int) var map_height = 50
 export(int) var noise_octaves = 1 
 export(int) var noise_period = 10
 export(float) var noise_persistence = 0.7
@@ -22,11 +23,12 @@ func _ready():
 	rng.randomize()
 	world_seed = String(rng.randi_range(rndmMin, rndmMax))
 	tile_map = get_parent() as TileMap
-	if (tile_map != null): 
-		clear()
-		generate()
-	else: 
+	if tile_map == null: 
 		print("rip tilemap")
+		return
+	clear()
+	generate()
+	
 
 
 func _redraw(_value = null)->void:
@@ -49,13 +51,13 @@ func generate() -> void:
 		for y in range(-map_height/2, map_height/2):
 			if simplex_noise.get_noise_2d(x, y) < noise_treshold:
 				_set_autotile(x, y)
-	
+			else:
+				AutoLoad.add_spawnable(Vector2(x, y))
 	tile_map.update_dirty_quadrants()
+	emit_signal("finished_generating")
 
 func _set_autotile(x: int, y:int)->void:
-	tile_map.set_cell(
-		x,
-		y,
+	tile_map.set_cell(x, y,
 		tile_map.get_tileset().get_tiles_ids()[0],
 		false,
 		false,

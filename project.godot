@@ -11,7 +11,12 @@ config_version=4
 [application]
 
 config/name="M.O.A.F.B"
+run/main_scene="res://Scripts/Menu/Menu.tscn"
 config/icon="res://icon.png"
+
+[autoload]
+
+AutoLoad="*res://Scripts/AutoLoad/AutoLoad.gd"
 
 [gui]
 

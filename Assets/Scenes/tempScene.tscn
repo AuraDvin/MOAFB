@@ -5,34 +5,9 @@
 [sub_resource type="GDScript" id=2]
 resource_name = "Test"
 script/source = "extends Node2D
-#
-#
-#onready var bullet = preload(\"res://Scripts/Bullet/Bullet.tscn\")
-#onready var player = get_node(\"Player\")
-#
-#const radius: float = 100.0
-#const delay: float = 2.0
 
 func _input(event) -> void:
 	pass
-#	if event is InputEventMouseButton:
-#		_shoot(event.position, event.get_button_index() == 1)
-
-#func _shoot(position:Vector2, spawn: bool) -> void:
-#	var mouse_pos = get_global_mouse_position()
-#	var player_pos = player.global_transform.origin 
-#	var distance = player_pos.distance_to(mouse_pos) 
-#	var mouse_dir = (mouse_pos-player_pos).normalized()
-#	if distance > radius:
-#		mouse_pos = player_pos + (mouse_dir * radius)
-#	if (spawn && player.canShoot): 
-#		player.canShoot = false
-#		player.get_node(\"shootDelay\").start(0)
-#		var bulletObject = bullet.instance()
-#		bulletObject.init(player_pos)
-#		add_child(bulletObject)
-#		bulletObject.global_transform.origin = mouse_pos
-#
 "
 
 [sub_resource type="RectangleShape2D" id=1]
