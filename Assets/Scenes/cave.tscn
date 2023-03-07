@@ -20,9 +20,10 @@ margin_bottom = 1830.0
 color = Color( 0.494118, 0.160784, 0.721569, 1 )
 
 [node name="TempTileMap" type="TileMap" parent="."]
-scale = Vector2( 4, 4 )
+scale = Vector2( 3, 3 )
 tile_set = ExtResource( 1 )
-cell_size = Vector2( 8, 8 )
+cell_size = Vector2( 16, 16 )
+cell_custom_transform = Transform2D( 128, 0, 0, 128, 0, 0 )
 show_collision = true
 format = 1
 tile_data = PoolIntArray( 1376456, 0, 196611 )

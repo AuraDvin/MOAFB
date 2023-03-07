@@ -1,6 +1,7 @@
 extends Node
 
 var test = 0
+var doLog = true
 #var rng = RandomNumberGenerator.new()
 var spawnable_locations = []
 
@@ -27,3 +28,7 @@ func show_spawnable():
 
 func get_last_spawnable_index():
 	return spawnable_locations.size() - 1
+
+func auraLog(any):
+	if doLog:
+		print(any)

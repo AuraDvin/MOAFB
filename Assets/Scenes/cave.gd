@@ -6,8 +6,7 @@ var mobs_spawned = 0
 
 func _ready():
 	rng.randomize()
-	pass 
-
+	# AutoLoad.auraLog("cave script ready")
 
 #func _event(event):
 #	if event is InputEventKey:
@@ -25,7 +24,7 @@ func _on_caveGenerator_finished_generating():
 	var old_mob_count = -1
 	
 	if last_index == null or last_index == NAN:
-		print("rip")
+		AutoLoad.auraLog("rip")
 		return
 	
 	var last_spawn = [AutoLoad.spawnable_locations[0]]
@@ -36,7 +35,7 @@ func _on_caveGenerator_finished_generating():
 		var spawn_position = AutoLoad.spawnable_locations[index]
 		for j in last_spawn:
 			if j.x - spawn_position.x > 400:
-#				print("true")
+#				AutoLoad.auraLog("true")
 				mobs_spawned += 1
 				spawn_mob(spawn_position)
 				break
@@ -44,6 +43,8 @@ func _on_caveGenerator_finished_generating():
 			i -= 1
 		else:
 			old_mob_count = mobs_spawned
+		if i < 0:
+			print(i)
 #	$Camera2D.set_global_position(spawn_position)
 	
 func spawn_mob(location):

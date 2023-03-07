@@ -97,11 +97,9 @@ collision/safe_margin = 1.0
 script = ExtResource( 2 )
 
 [node name="downRay" type="RayCast2D" parent="."]
-modulate = Color( 0.0313726, 0, 1, 1 )
 position = Vector2( 0, 10 )
 enabled = true
 cast_to = Vector2( 0, 80 )
-collide_with_areas = true
 
 [node name="capsuleShape" type="CollisionShape2D" parent="."]
 modulate = Color( 0.858824, 0.247059, 0.247059, 1 )
@@ -145,10 +143,15 @@ sleeping = true
 [node name="shootDelay" type="Timer" parent="."]
 wait_time = 0.42
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="stompArea" type="Area2D" parent="."]
+visible = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="stompArea"]
 position = Vector2( 13, 60 )
 shape = SubResource( 7 )
+
+[node name="miner" type="RayCast2D" parent="."]
+enabled = true
+cast_to = Vector2( 0, 100 )
 
 [connection signal="timeout" from="shootDelay" to="." method="_on_shootDelay_timeout"]
