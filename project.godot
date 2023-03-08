@@ -18,6 +18,20 @@ config/icon="res://icon.png"
 
 AutoLoad="*res://Scripts/AutoLoad/AutoLoad.gd"
 
+[debug]
+
+settings/fps/force_fps=60
+settings/stdout/print_fps=true
+
+[display]
+
+window/vsync/use_vsync=false
+window/stretch/aspect="keep"
+
+[global]
+
+fps=false
+
 [gui]
 
 common/drop_mouse_on_gui_input_disabled=true

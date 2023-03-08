@@ -2,6 +2,8 @@ extends Node
 
 signal finished_generating
 
+const MISSING_TILE_MAP_ERROR = "Tile Map is not defined! Make sure to set this scene as a child of a tile map node in your tree"
+
 export (String) var world_seed = "some seed idk"
 export (int) var map_width = 80
 export (int) var map_height = 50
@@ -18,8 +20,8 @@ var rng = RandomNumberGenerator.new()
 var rndmMin = 10000000 # 10_000_000
 var rndmMax = 99999999 # 99_999_999
 
-#onready var player = get_tree().get_root().get_node( ' Player ' )
-
+# debug
+#var debug_sprite = preload("res://icon.png") # neki
 
 func _ready():
 #	print("cave generator ready")
@@ -27,7 +29,7 @@ func _ready():
 	world_seed = String(rng.randi_range(rndmMin, rndmMax))
 	tile_map = get_parent() as TileMap
 	if tile_map == null:
-		print("rip tilemap")
+		print(MISSING_TILE_MAP_ERROR)
 		return
 	clear()
 	generate()
@@ -53,6 +55,7 @@ func generate() -> void:
 			if simplex_noise.get_noise_2d(x, y) < noise_treshold:
 				_set_autotile(x, y)
 			else :
+				# or would this be tile_map.map_to_world()
 				AutoLoad.add_spawnable(Vector2(x, y))
 	tile_map.update_dirty_quadrants()
 	emit_signal("finished_generating")
@@ -67,16 +70,15 @@ func _set_autotile(x:int, y:int) -> void:
 	tile_map.update_bitmask_area(Vector2(x, y))
 
 func _removeTile(x:int, y:int) -> void:
-	var sus = tile_map.world_to_map(Vector2(x, y))
-	print(x, y)
-	print(sus)
-	tile_map.set_cell(sus.x, sus.y, -1)
-	# AutoLoad.auraLog( '  is removed ?' )
-	tile_map.update_dirty_quadrants()
-	tile_map.update_bitmask_area(Vector2(x, y))
-	# id -1 je prazen cell?
+	var local = tile_map.to_local(Vector2(x, y))
+	var position = tile_map.world_to_map(local)
+	tile_map.set_cell(position.x, position.y, -1)
+	tile_map.update_bitmask_area(position)
 
 
-func _on_Player_mine_block(x, y):
+func _on_Player_mine_block(x, y, direction):
+	if direction.x > 0:
+		x -= 1
+	if direction.y > 0:
+		y -= 1
 	_removeTile(x, y)
-	# tile_map.set_cellv(Vector2(x, y), -1)

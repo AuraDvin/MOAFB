@@ -19,7 +19,7 @@ onready var stop_timer = $stopMoving
 
 func _ready():
 #	$Sprite.play("default")
-	print("moment")
+	# print("moment")
 	$AnimatedSprite.play("default")
 
 func _process(delta):
@@ -65,27 +65,27 @@ func find_player(_delta):
 	is_moving_left = player_location.x <= position.x
 	
 	if is_moving_left != before:   
-		print("Changed directions")
+		# print("Changed directions")
 		scale.x = -scale.x
 
 func detect_ledge(_delta):
 	
 	if not $edge.is_colliding() and is_on_floor():
 #		scale.x = -scale.x
-		print("started timer")
+		# print("started timer")
 		if stop_timer.time_left == 0:
 			stop_timer.start()
 			should_move = false
 
 func hit():
-	print("Imagine I hit something")
+	# print("Imagine I hit something")
 	$playerHitter.monitoring = true
 	
 func end_hit():
-	print("ok no more hitting")
+	# print("ok no more hitting")
 	$playerHitter.monitoring = false
 
-func _on_playerCollision_body_entered(body):
+func _on_playerCollision_body_entered(_body):
 	pass
 #	print("Body entered", body)
 
