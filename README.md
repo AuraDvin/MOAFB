@@ -13,13 +13,13 @@
 
 1. Code 🟧
     1. Player 🟧
-        - [ ] Movement (left/right) 
-        - [ ] Jumping - falling 
-        - [ ] Slopes 
+        - [x] Movement (left/right) 
+        - [x] Jumping - falling 
+        - [ ] ~~Slopes~~
         - [ ] mining animation 
         - [ ] Hurt animation 
         - [ ] Health 
-        - [ ] Fall damage 
+        - [ ] ~~Fall damage~~
     1. Cave generation  
         - [x] random cave generation for every iteration 
         - [ ] ore spawning 
