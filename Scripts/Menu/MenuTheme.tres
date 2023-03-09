@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=11 format=2]
+[gd_resource type="Theme" load_steps=8 format=2]
 
 [ext_resource path="res://Scripts/Menu/theWorkingFont.tres" type="DynamicFont" id=1]
 
@@ -16,15 +16,7 @@ corner_radius_bottom_left = 9
 
 [sub_resource type="StyleBoxEmpty" id=7]
 
-[sub_resource type="DynamicFont" id=9]
-
-[sub_resource type="StyleBoxTexture" id=10]
-region_rect = Rect2( 193, 43, 8, 122 )
-
 [sub_resource type="DynamicFont" id=11]
-
-[sub_resource type="DynamicFont" id=12]
-size = 40
 
 [sub_resource type="DynamicFont" id=13]
 
@@ -37,10 +29,13 @@ Button/fonts/font = ExtResource( 1 )
 Button/styles/focus = SubResource( 8 )
 Button/styles/hover = SubResource( 8 )
 Button/styles/normal = SubResource( 7 )
-Label/fonts/font = SubResource( 9 )
-Label/styles/normal = SubResource( 10 )
+Label/fonts/font = ExtResource( 1 )
 LineEdit/fonts/font = SubResource( 11 )
-ProgressBar/fonts/font = SubResource( 12 )
+ProgressBar/colors/font_color = Color( 0.94, 0.94, 0.94, 1 )
+ProgressBar/colors/font_color_shadow = Color( 0, 0, 0, 1 )
+ProgressBar/fonts/font = ExtResource( 1 )
+ProgressBar/styles/bg = null
+ProgressBar/styles/fg = null
 TabContainer/fonts/font = SubResource( 13 )
 TextEdit/fonts/font = SubResource( 14 )
 Tree/fonts/font = SubResource( 15 )

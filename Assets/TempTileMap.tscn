@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Scripts/CaveGeneration/caveGenerator.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Assets/TempTileMap.gd" type="Script" id=2]
+[ext_resource path="res://Assets/TileSet.tres" type="TileSet" id=3]
+
+[node name="TempTileMap" type="TileMap"]
+scale = Vector2( 3, 3 )
+tile_set = ExtResource( 3 )
+cell_size = Vector2( 16, 16 )
+cell_custom_transform = Transform2D( 128, 0, 0, 128, 0, 0 )
+show_collision = true
+format = 1
+tile_data = PoolIntArray( 1376456, 0, 196611 )
+script = ExtResource( 2 )
+
+[node name="caveGenerator" parent="." instance=ExtResource( 1 )]
+world_seed = "uhu aha"
+map_width = 400
+map_height = 200
+
+[connection signal="finished_generating" from="caveGenerator" to="." method="_on_caveGenerator_finished_generating"]

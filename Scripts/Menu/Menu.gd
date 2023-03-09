@@ -1,5 +1,7 @@
 extends Control
 
+signal go_to_options
+
 var last_mouse_position = Vector2.ZERO
 var pointer_invisible_timestamp = 0
 
@@ -41,20 +43,26 @@ func _on_Quit_Button_pressed():
 
 func _on_Options_Button_pressed():
 	$Main.visible = false
+	$GameTitle.visible = false
+	$Main/CanvasLayer.visible = false
 	$Options.visible = true
+	emit_signal("go_to_options")
 
 func _on_BackToMenu_pressed():
 	$Options.visible = false
 	$Main.visible = true
+	$Main/CanvasLayer.visible = true
+	$GameTitle.visible = true
+	$Main/Start_Button.grab_focus()
 
 func _on_Start_Button_mouse_entered():
 	$Main/Start_Button.grab_focus()
 
 func _on_Options_Button_mouse_entered():
-	$Main/Options_Button.grab_focus()
+	$Main/CanvasLayer/HBoxContainer/Options_Button.grab_focus()
 
 func _on_Quit_Button_mouse_entered():
-	$Main/Quit_Button.grab_focus()
+	$Main/CanvasLayer/HBoxContainer/Quit_Button.grab_focus()
 
 func _on_MouseDissappear_timeout():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)

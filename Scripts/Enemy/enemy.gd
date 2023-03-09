@@ -79,13 +79,16 @@ func detect_ledge(_delta):
 
 func hit():
 	# print("Imagine I hit something")
+	$AnimatedSprite.play("Attack")
 	$playerHitter.monitoring = true
 	
 func end_hit():
 	# print("ok no more hitting")
 	$playerHitter.monitoring = false
 
-func _on_playerCollision_body_entered(_body):
+func _on_playerCollision_body_entered(body):
+	print(body)
+	hit()
 	pass
 #	print("Body entered", body)
 
