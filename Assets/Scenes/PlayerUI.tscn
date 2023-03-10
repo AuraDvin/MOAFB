@@ -7,6 +7,11 @@
 anchor_right = 1.0
 anchor_bottom = 1.0
 
+[node name="Button2" type="Button" parent="."]
+margin_right = 240.0
+margin_bottom = 182.0
+text = "Heal 10"
+
 [node name="ProgressBar" type="ProgressBar" parent="."]
 margin_left = 8.0
 margin_top = 563.0
@@ -25,3 +30,13 @@ margin_right = 242.0
 margin_bottom = 559.0
 theme = ExtResource( 2 )
 text = "Health: "
+
+[node name="Button" type="Button" parent="."]
+margin_left = 255.0
+margin_top = 5.0
+margin_right = 604.0
+margin_bottom = 191.0
+text = "Take 10 damage"
+
+[connection signal="pressed" from="Button2" to="ProgressBar" method="_on_Button2_pressed"]
+[connection signal="pressed" from="Button" to="ProgressBar" method="_on_Button_pressed"]

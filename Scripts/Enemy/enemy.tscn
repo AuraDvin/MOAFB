@@ -123,13 +123,12 @@ animations = [ {
 "speed": 5.0
 } ]
 
-[node name="enemy" type="KinematicBody2D"]
+[node name="enemy" type="KinematicBody2D" groups=["Enemy"]]
 script = ExtResource( 1 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( -206, -195 )
 offset = Vector2( 200.409, 186.569 )
-current = true
 zoom = Vector2( 0.637, 0.748 )
 
 [node name="Shape" type="Polygon2D" parent="."]
@@ -149,6 +148,8 @@ cast_to = Vector2( 0, 68 )
 
 [node name="playerCollision" type="Area2D" parent="."]
 collision_layer = 0
+monitoring = false
+monitorable = false
 
 [node name="CanAttackPlayer" type="CollisionShape2D" parent="playerCollision"]
 position = Vector2( -119, 24 )
@@ -177,5 +178,15 @@ frames = SubResource( 28 )
 wait_time = 2.0
 one_shot = true
 
+[node name="hit" type="Timer" parent="."]
+one_shot = true
+
+[node name="wall" type="RayCast2D" parent="." groups=["Enemy"]]
+position = Vector2( -44, 74 )
+rotation = 1.5708
+enabled = true
+
 [connection signal="body_entered" from="playerCollision" to="." method="_on_playerCollision_body_entered"]
+[connection signal="body_entered" from="playerHitter" to="." method="_on_playerHitter_body_entered"]
 [connection signal="timeout" from="stopMoving" to="." method="_on_stopMoving_timeout"]
+[connection signal="timeout" from="hit" to="." method="_on_hit_timeout"]

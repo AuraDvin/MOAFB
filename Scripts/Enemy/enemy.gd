@@ -1,10 +1,13 @@
 extends KinematicBody2D
 
+signal dealDamage(value)
+
 const UP = Vector2(0, -1)
 const GRAVITY = 30
 const MAXFALLSPD = 600
 const MAXSPD = 375
 const ACCEL = 4
+const JUMPFORCE = -80
 
 var motion  =  Vector2()
 var player_location = Vector2()
@@ -12,17 +15,52 @@ var is_moving_left = true
 var location_check = 0
 var should_move = true
 var time_when_stopped = 0
+var damage = 10
+
+var nav = null
+var path = []
+var threshold
+var temp = 0
 
 onready var level_name = get_tree().get_current_scene().get_name()
 onready var player = get_tree().get_root().get_node_or_null("./" + level_name + "/Player")
 onready var stop_timer = $stopMoving
+#onready var navigation = get_tree().get_root().get_node("/root/tempScene/Navigation2d")
 
 func _ready():
+	var o_nav = get_parent().get_parent()
+	yield( get_parent().get_parent(), "ready")
+	nav =  get_parent().get_parent().nav
+#	yield(navigation, "ready")
+#	nav = owner.owner.nav
 #	$Sprite.play("default")
 	# print("moment")
 	$AnimatedSprite.play("default")
 
+func _physics_process(delta):
+	temp += delta
+	if temp >= 1000:
+		print(path)
+		temp = 0
+	if path.size() > 0:
+		move_to_target()
+
+
+func move_to_target():
+	if global_position.distance_to(path[0]) < threshold:
+		path.remove(0)
+	else:
+		var direction = global_position.direction_to(path[0])
+		motion = direction * MAXSPD
+		motion = move_and_slide(motion)
+
+func get_target_path(target_pos):
+	print("get target path called")
+	path = nav.get_simple_path(global_position, target_pos, false)
+
+
 func _process(delta):
+	return
 	var now = Time.get_ticks_msec()
 	
 	find_player(delta)     # sets is_going_left first
@@ -33,9 +71,22 @@ func _process(delta):
 		return
 	if now - time_when_stopped < 42:
 		return
-	detect_ledge(delta)    # overwrites is_going_left if necessary
+#	detect_ledge(delta)    # overwrites is_going_left if necessary
+	detect_wall()
 	move_enemy(delta)      # uhu
 	
+
+func detect_wall():
+	if $wall.is_colliding() and $wall.get_collider().is_in_group('tilemap'):
+		jump()
+
+func jump():
+	motion.y = JUMPFORCE
+
+func jump_cut():
+	if motion.y < -30:
+		motion.y += 50
+
 
 func move_enemy(_delta):
 	
@@ -44,7 +95,7 @@ func move_enemy(_delta):
 	if abs(motion.x) > MAXSPD:
 		motion.x = sign(motion.x) * MAXSPD
 	
-	motion.y += GRAVITY if not is_on_floor() else 1
+	motion.y += GRAVITY if not is_on_floor() else 0
 	
 	if motion.y > MAXFALLSPD:
 		motion.y = MAXFALLSPD
@@ -62,8 +113,14 @@ func find_player(_delta):
 
 	if distance > 700:
 		return
-	is_moving_left = player_location.x <= position.x
+		
+	is_moving_left = player_location.x <= position.x #TODO: make better
 	
+	if player_location.y > position.y:
+		jump()
+	else:
+		jump_cut()
+		
 	if is_moving_left != before:   
 		# print("Changed directions")
 		scale.x = -scale.x
@@ -78,18 +135,24 @@ func detect_ledge(_delta):
 			should_move = false
 
 func hit():
-	# print("Imagine I hit something")
 	$AnimatedSprite.play("Attack")
-	$playerHitter.monitoring = true
+#	$playerCollision.monitoring = false
+	$playerCollision.call_deferred('set_monitoring', false)
+	$hit.start()
 	
 func end_hit():
 	# print("ok no more hitting")
-	$playerHitter.monitoring = false
+	$playerHitter.call_deffered('monitoring', false)
 
 func _on_playerCollision_body_entered(body):
-	print(body)
+#	print(body)
+	if not body.is_in_group('player'):
+		$playerCollision.call_deferred('monitoring', false)
+		return
+	
 	hit()
-	pass
+	
+	
 #	print("Body entered", body)
 
 func _on_stopMoving_timeout():
@@ -99,3 +162,19 @@ func _on_stopMoving_timeout():
 	should_move = true
 	time_when_stopped = Time.get_ticks_msec()
 #	print("About to fall off")
+
+
+func _on_hit_timeout() -> void:
+#	if $playerHitter.is_colliding():
+	$playerHitter.call_deferred('monitoring', true)
+	pass
+
+
+func _on_playerHitter_body_entered(body):
+	if not body.is_in_group('player'):
+		return
+	
+	# emit signal to take damage
+	emit_signal("dealDamage", damage)
+	$playerHitter.call_deferred('monitoring', false)
+	$playerCollision.call_deffered('monitoring', true)

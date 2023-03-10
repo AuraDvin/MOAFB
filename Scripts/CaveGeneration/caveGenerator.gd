@@ -3,8 +3,9 @@ extends Node
 signal finished_generating
 
 const MISSING_TILE_MAP_ERROR = "Tile Map is not defined! Make sure to set this scene as a child of a tile map node in your tree"
+const SMART_CURSOR = preload("res://Assets/smart-cursor-64.png")
 
-export (String) var world_seed = "some seed idk"
+export (String) var world_seed = "some seed"
 export (int) var map_width = 80
 export (int) var map_height = 50
 export (int) var noise_octaves = 1
@@ -19,7 +20,7 @@ var simplex_noise:OpenSimplexNoise = OpenSimplexNoise.new()
 var rng = RandomNumberGenerator.new()
 var rndmMin = 10000000 # 10_000_000
 var rndmMax = 99999999 # 99_999_999
-
+var smart_cursor
 # debug
 #var debug_sprite = preload("res://icon.png") # neki
 
@@ -33,6 +34,11 @@ func _ready():
 		return
 	clear()
 	generate()
+	smart_cursor= Sprite.new()
+	smart_cursor.texture = SMART_CURSOR
+	smart_cursor.centered = false
+#	get_tree().get_root().add_child(smart_cursor)
+	call_deferred("add_child", smart_cursor)
 
 func _redraw(_value = null) -> void:
 	if tile_map == null:
@@ -55,7 +61,6 @@ func generate() -> void:
 			if simplex_noise.get_noise_2d(x, y) < noise_treshold:
 				_set_autotile(x, y)
 			else :
-				# or would this be tile_map.map_to_world()
 				AutoLoad.add_spawnable(Vector2(x, y))
 	tile_map.update_dirty_quadrants()
 	emit_signal("finished_generating")
@@ -82,3 +87,18 @@ func _on_Player_mine_block(x, y, direction):
 	if direction.y > 0:
 		y -= 1
 	_removeTile(x, y)
+
+
+func _on_Player_move_smart_cursor(position, direction):
+	if direction.x > 0:
+		position.x -= 1
+	if direction.y > 0:
+		position.y -= 1
+	var local = tile_map.to_local(position)
+	var tile = tile_map.world_to_map(local)
+	var world = tile_map.map_to_world(tile)
+	var global = tile_map.to_global(world)
+	smart_cursor.set_global_position(global)
+	
+func _on_Player_cursor_visibility(yes):
+	smart_cursor.visible = yes

@@ -37,8 +37,8 @@ margin_bottom = 680.75
 rect_scale = Vector2( 2.5, 2.5 )
 
 [node name="Start_Button" type="Button" parent="Main"]
-margin_top = -3.0
 margin_right = 132.0
+margin_bottom = 19.0
 focus_neighbour_top = NodePath("../CanvasLayer/HBoxContainer/Quit_Button")
 theme = ExtResource( 3 )
 text = "START"

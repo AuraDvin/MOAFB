@@ -1,6 +1,9 @@
 extends KinematicBody2D
 
 signal mine_block(x, y, direction)
+signal health_change(newHealth)
+signal move_smart_cursor(position, normal)
+signal cursor_visibility(yes)
 
 const UP:Vector2 = Vector2(0, -1)
 const GRAVITY:int = 30
@@ -12,6 +15,7 @@ const SHOOT_RADIUS:float = 100.00
 
 var motion:Vector2 = Vector2()
 var canShoot:bool = true
+var health = 100
 
 # debug
 var debug_sprite = preload("res://icon.png")
@@ -53,10 +57,18 @@ func _physics_process(_delta):
 	if Input.is_action_just_pressed("move_up") and down_ray.is_colliding():
 		jump()
 
-	if Input.is_action_just_pressed("mine") and $miner.is_colliding():
+	if $miner.is_colliding() and $miner.get_collider().is_in_group('tilemap'):
+		var tile_location = $miner.get_collision_point()
+		var normal = $miner.get_collision_normal()
+		emit_signal("cursor_visibility", true)
+		emit_signal("move_smart_cursor", tile_location, normal)
+	else:
+		emit_signal("cursor_visibility", false)
+	if Input.is_action_just_pressed("mine") and $miner.is_colliding() and $miner.get_collider().is_in_group('tilemap'):
 		var point = $miner.get_collision_point()
 		var normal = $miner.get_collision_normal() # to pass for direction
 		if $miner.get_collider() != null:
+			
 			# AutoLoad.auraLog(normal)
 			emit_signal("mine_block", point.x, point.y, normal)
 			pass
@@ -116,6 +128,10 @@ func checkFallingAnim(y:float):
 		return 1
 	animationPlayer.play("Jump")
 	return 0
+
+func takeDamage(value):
+	health -= value
+	emit_signal("health_change", health)
 
 func _on_shootDelay_timeout():
 	canShoot = true

@@ -21,7 +21,6 @@ AutoLoad="*res://Scripts/AutoLoad/AutoLoad.gd"
 [debug]
 
 settings/fps/force_fps=60
-settings/stdout/print_fps=true
 
 [display]
 
