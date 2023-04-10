@@ -1,8 +1,10 @@
 extends Node2D
 
+signal removeBlocks(atPosition)
+
 var rng = RandomNumberGenerator.new()
 var mob_scene = preload("res://Scripts/Enemy/enemy.tscn")
-var player_scene = preload("res://Scripts/Player/Player.tscn")
+var player_scene = preload("res://Scripts/Player/player.tscn")
 var mobs_spawned = 0
 
 func _ready():
@@ -23,16 +25,16 @@ func _ready():
 func _on_TempTileMap_script_done():
 	var last_index = AutoLoad.get_last_spawnable_index()
 	var old_mob_count = -1
-	
+
 	if last_index == null or last_index == NAN:
 		AutoLoad.auraLog("rip")
 		return
-	
+
 	var last_spawn = [AutoLoad.spawnable_locations[0]]
 	var player_spawn = AutoLoad.spawnable_locations[0]
 	AutoLoad.spawnable_locations.remove(0)
 	spawn_player(player_spawn)
-		
+
 	for i in range(10):
 		rng.randomize()
 		var index = rng.randi_range(1, last_index)
@@ -51,7 +53,7 @@ func _on_TempTileMap_script_done():
 		if i < 0:
 			print(i)
 #	$Camera2D.set_global_position(spawn_position)
-	
+
 func spawn_mob(location):
 	var mob = mob_scene.instance()
 	call_deferred("add_child", mob)
@@ -60,7 +62,15 @@ func spawn_mob(location):
 func spawn_player(location):
 	var player = player_scene.instance()
 	call_deferred("add_child", player)
-	player.set_global_position(location)
+	for x in range(8):
+		for y in range(8):
+			var mapX = location.x - x if x < 4 else location.x + x
+			var mapY = location.y - y if y < 4 else location.y + y
+			var position = Vector2(mapX, mapY)
+			emit_signal("removeBlocks", position)
+
+#	player.set_global_position(location)
+
 
 
 

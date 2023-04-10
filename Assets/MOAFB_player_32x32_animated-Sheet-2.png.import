@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/bullet.png-4c3a60f3b94fcc693bdb889fe34d5669.stex"
+path="res://.import/MOAFB_player_32x32_animated-Sheet-2.png-e4089cd50b156b7407a8fc76febbb8b8.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/bullet.png"
-dest_files=[ "res://.import/bullet.png-4c3a60f3b94fcc693bdb889fe34d5669.stex" ]
+source_file="res://Assets/MOAFB_player_32x32_animated-Sheet-2.png"
+dest_files=[ "res://.import/MOAFB_player_32x32_animated-Sheet-2.png-e4089cd50b156b7407a8fc76febbb8b8.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=true
+flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

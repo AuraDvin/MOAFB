@@ -1,28 +1,41 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
-[ext_resource path="res://Scripts/Player/Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Scripts/Player/player.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Assets/TileSet.tres" type="TileSet" id=2]
 [ext_resource path="res://Scripts/CaveGeneration/caveGenerator.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Assets/crt_shader.shader" type="Shader" id=4]
 
 [sub_resource type="GDScript" id=2]
 resource_name = "Test"
 script/source = "extends Node2D
 
+signal clear_area_around_player_spawn (spawn_location)
+
 var rng = RandomNumberGenerator.new()
 var mobs_spawned = 0
 var mob_scene = preload(\"res://Scripts/Enemy/enemy.tscn\")
-var player_scene = preload(\"res://Scripts/Player/Player.tscn\")
+var player_scene = preload(\"res://Scripts/Player/player.tscn\")
 
 onready var player = $Player
 onready var nav = $Navigation2D
 
 func _on_Timer_timeout():
 #	print(\"timer call\")
-	get_tree().call_group(\"Enemy\", 'get_target_path', player.global_position)
+#	get_tree().call_group(\"Enemy\", 'get_target_path', player.global_position)
+	return
 	
 # TODO: 
 # Player spawn on proper location
 # Enemy spawn on proper location
+
+
+
+func _input(_event):
+	if Input.is_action_just_released(\"Map\"):
+		$Camera2D.current = not $Camera2D.current
+		$Camera2D/ColorRect.visible = not $Camera2D/ColorRect.visible
+		if not $Camera2D.current:
+			$Player/Camera2D.current = true
 
 
 func _ready():
@@ -32,21 +45,21 @@ func _ready():
 #	if last_index == null or last_index == NAN:
 #		AutoLoad.auraLog(\"rip\")
 #		return
-	
-	var last_spawn = [0]
+#
+#	var last_spawn = [0]
 	var player_spawn = AutoLoad.spawnable_locations[0]
 	AutoLoad.spawnable_locations.remove(0)
 	spawn_player(player_spawn)
-	
-	for i in range(1):
-		rng.randomize()
-		var index = rng.randi_range(0, AutoLoad.get_last_spawnable_index())
-		var spawn = AutoLoad.spawnable_locations[index]
-		while last_spawn.has(index):
-			index = rng.randi_range(0, AutoLoad.get_last_spawnable_index())
-			spawn = AutoLoad.spawnable_locations[index]
-		last_spawn.append(index)
-		spawn_mob(spawn)
+#
+#	for i in range(1):
+#		rng.randomize()
+#		var index = rng.randi_range(0, AutoLoad.get_last_spawnable_index())
+#		var spawn = AutoLoad.spawnable_locations[index]
+#		while last_spawn.has(index):
+#			index = rng.randi_range(0, AutoLoad.get_last_spawnable_index())
+#			spawn = AutoLoad.spawnable_locations[index]
+#		last_spawn.append(index)
+#		spawn_mob(spawn)
 
 ##	for i in range(10):
 #		rng.randomize()
@@ -66,7 +79,7 @@ func _ready():
 #		if i < 0:
 #			print(i)
 #	$Camera2D.set_global_position(spawn_position)
-	
+	pass
 func spawn_mob(location):
 	var mob = mob_scene.instance()
 	call_deferred(\"add_child\", mob)
@@ -74,10 +87,8 @@ func spawn_mob(location):
 #	print(\"Spawned\")
 
 func spawn_player(location):
-#	var player = $Player
-#	call_deferred(\"add_child\", player)
+	emit_signal(\"clear_area_around_player_spawn\", location)
 	player.set_global_position(location)
-
 
 func _on_caveGenerator_finished_generating():
 	print (AutoLoad.spawnable_locations)
@@ -92,19 +103,26 @@ func _on_Area2D_body_entered(body):
 "
 
 [sub_resource type="RectangleShape2D" id=3]
-extents = Vector2( 1808.25, 497 )
+extents = Vector2( 5453.13, 359 )
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = ExtResource( 4 )
+shader_param/crt_curve = 0.02
+shader_param/crt_scan_line_color = 0.143
+shader_param/aperture_grille_rate = 1.0
+shader_param/rf_switch_esque_blur = 0.571
+shader_param/white_noise_rate = 0.21
 
 [node name="tempScene" type="Node2D"]
 script = SubResource( 2 )
 
 [node name="Player" parent="." instance=ExtResource( 1 )]
-position = Vector2( -45, -19 )
-z_index = 1
 
 [node name="Navigation2D" type="Navigation2D" parent="."]
 scale = Vector2( 4, 4 )
 
 [node name="TileMap" type="TileMap" parent="Navigation2D" groups=["tilemap"]]
+z_index = 1
 tile_set = ExtResource( 2 )
 cell_size = Vector2( 16, 16 )
 collision_layer = 3
@@ -113,18 +131,34 @@ bake_navigation = true
 format = 1
 
 [node name="caveGenerator" parent="Navigation2D/TileMap" instance=ExtResource( 3 )]
-map_width = 20
-map_height = 20
+map_width = 200
+map_height = 200
+noise_treshold = 0.3
 
 [node name="Area2D" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-position = Vector2( 479.75, 1106 )
+position = Vector2( 162.875, 3198 )
 shape = SubResource( 3 )
 
 [node name="Timer" type="Timer" parent="."]
 autostart = true
 
+[node name="Camera2D" type="Camera2D" parent="."]
+light_mask = 3
+z_index = 2
+zoom = Vector2( 10, 10 )
+
+[node name="ColorRect" type="ColorRect" parent="Camera2D"]
+visible = false
+light_mask = 2
+material = SubResource( 4 )
+margin_left = -5108.0
+margin_top = -2979.0
+margin_right = 5129.0
+margin_bottom = 3009.0
+
+[connection signal="clear_area_around_player_spawn" from="." to="Navigation2D/TileMap/caveGenerator" method="_on_tempScene_clear_area_around_player_spawn"]
 [connection signal="cursor_visibility" from="Player" to="Navigation2D/TileMap/caveGenerator" method="_on_Player_cursor_visibility"]
 [connection signal="mine_block" from="Player" to="Navigation2D/TileMap/caveGenerator" method="_on_Player_mine_block"]
 [connection signal="move_smart_cursor" from="Player" to="Navigation2D/TileMap/caveGenerator" method="_on_Player_move_smart_cursor"]

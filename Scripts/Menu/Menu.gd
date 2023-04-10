@@ -35,7 +35,7 @@ func _input(event):
 ## 	EVENTS/TRIGGERS AND THINGS
 func _on_Start_Button_pressed():
 	# print("pressed start")
-	var _moment = get_tree().change_scene("res://Assets/Scenes/cave.tscn")
+	var _moment = get_tree().change_scene("res://Assets/Scenes/mining.tscn")
 	# print(moment)
 
 func _on_Quit_Button_pressed():

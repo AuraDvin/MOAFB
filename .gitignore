@@ -15,3 +15,13 @@ data_*/
 
 # My custom ignores
 Assets/stolen/
+Assets/*.gif
+Assets/gold (Custom).png
+Assets/gold (Custom).png.import
+Assets/MOAFB_player_32x32_animated-Sheet.*
+Assets/MOAFB_player_animated-Sheet.*
+
+# Files I want to remove
+Assets/Scenes/cave.*
+Assets/Scenes/enemyTest.*
+*.aseprite

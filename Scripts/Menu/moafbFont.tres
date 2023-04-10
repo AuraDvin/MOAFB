@@ -3,4 +3,6 @@
 [ext_resource path="res://Scripts/Menu/ka1.ttf" type="DynamicFontData" id=1]
 
 [resource]
+size = 36
+use_filter = true
 font_data = ExtResource( 1 )

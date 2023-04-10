@@ -16,64 +16,56 @@ var location_check = 0
 var should_move = true
 var time_when_stopped = 0
 var damage = 10
-
-var nav = null
-var path = []
-var threshold
-var temp = 0
+var threshold = 250
 
 onready var level_name = get_tree().get_current_scene().get_name()
 onready var player = get_tree().get_root().get_node_or_null("./" + level_name + "/Player")
 onready var stop_timer = $stopMoving
+onready var navi = $NavigationAgent2D
 #onready var navigation = get_tree().get_root().get_node("/root/tempScene/Navigation2d")
 
 func _ready():
-	var o_nav = get_parent().get_parent()
-	yield( get_parent().get_parent(), "ready")
-	nav =  get_parent().get_parent().nav
-#	yield(navigation, "ready")
-#	nav = owner.owner.nav
-#	$Sprite.play("default")
-	# print("moment")
-	$AnimatedSprite.play("default")
+	pass
+#	$AnimatedSprite.play("default")
+	#TODO: Navigation setup 
 
-func _physics_process(delta):
-	temp += delta
-	if temp >= 1000:
-		print(path)
-		temp = 0
-	if path.size() > 0:
-		move_to_target()
-
+func _physics_process(_delta):
+	motion += applyGravity(_delta)
+	move_to_target()
+	
+func applyGravity(_delta):
+	var falling = Vector2()
+	falling.y += GRAVITY * _delta if not is_on_floor() else 0
+	if falling.y > MAXFALLSPD:
+		falling.y = MAXFALLSPD
+	return falling
 
 func move_to_target():
-	if global_position.distance_to(path[0]) < threshold:
-		path.remove(0)
-	else:
-		var direction = global_position.direction_to(path[0])
-		motion = direction * MAXSPD
-		motion = move_and_slide(motion)
+	var direction = global_position.direction_to(navi.get_next_location())
+	motion = direction * MAXSPD
+	motion = move_and_slide(motion, UP)
 
-func get_target_path(target_pos):
-	print("get target path called")
-	path = nav.get_simple_path(global_position, target_pos, false)
+func get_target_path(target_pos:Vector2):
+	navi.set_target_location(target_pos)
 
-
-func _process(delta):
-	return
-	var now = Time.get_ticks_msec()
+func _process(_delta):
+	if motion != Vector2.ZERO:
+		$AnimatedSprite.play("walk")
+	pass
+	# return
+# 	var now = Time.get_ticks_msec()
 	
-	find_player(delta)     # sets is_going_left first
+# 	find_player(delta)     # sets is_going_left first
 	
-	if not should_move:
-		$AnimatedSprite.play("default")
-#		print("cant move lol ", Time.get_ticks_msec())
-		return
-	if now - time_when_stopped < 42:
-		return
-#	detect_ledge(delta)    # overwrites is_going_left if necessary
-	detect_wall()
-	move_enemy(delta)      # uhu
+# 	if not should_move:
+# 		$AnimatedSprite.play("default")
+# #		print("cant move lol ", Time.get_ticks_msec())
+# 		return
+# 	if now - time_when_stopped < 42:
+# 		return
+# #	detect_ledge(delta)    # overwrites is_going_left if necessary
+# 	detect_wall()
+# 	move_enemy(delta)      # uhu
 	
 
 func detect_wall():
@@ -103,8 +95,9 @@ func move_enemy(_delta):
 	motion = move_and_slide(motion, UP, true)
 	$AnimatedSprite.play("walk")
 
+#TODO: make better
 func find_player(_delta):
-	if player == null: # If there is no player in the scene dont do anything
+	if player == null:
 		return
 		
 	var before = is_moving_left
@@ -114,7 +107,7 @@ func find_player(_delta):
 	if distance > 700:
 		return
 		
-	is_moving_left = player_location.x <= position.x #TODO: make better
+	is_moving_left = player_location.x <= position.x 
 	
 	if player_location.y > position.y:
 		jump()
@@ -122,38 +115,28 @@ func find_player(_delta):
 		jump_cut()
 		
 	if is_moving_left != before:   
-		# print("Changed directions")
 		scale.x = -scale.x
 
 func detect_ledge(_delta):
-	
 	if not $edge.is_colliding() and is_on_floor():
-#		scale.x = -scale.x
-		# print("started timer")
 		if stop_timer.time_left == 0:
 			stop_timer.start()
 			should_move = false
 
 func hit():
 	$AnimatedSprite.play("Attack")
-#	$playerCollision.monitoring = false
 	$playerCollision.call_deferred('set_monitoring', false)
 	$hit.start()
 	
 func end_hit():
-	# print("ok no more hitting")
 	$playerHitter.call_deffered('monitoring', false)
 
 func _on_playerCollision_body_entered(body):
-#	print(body)
 	if not body.is_in_group('player'):
 		$playerCollision.call_deferred('monitoring', false)
 		return
 	
 	hit()
-	
-	
-#	print("Body entered", body)
 
 func _on_stopMoving_timeout():
 	scale.x = -scale.x
@@ -161,20 +144,16 @@ func _on_stopMoving_timeout():
 	motion.x *= 0.4
 	should_move = true
 	time_when_stopped = Time.get_ticks_msec()
-#	print("About to fall off")
 
 
 func _on_hit_timeout() -> void:
-#	if $playerHitter.is_colliding():
 	$playerHitter.call_deferred('monitoring', true)
 	pass
 
 
 func _on_playerHitter_body_entered(body):
 	if not body.is_in_group('player'):
-		return
-	
-	# emit signal to take damage
+		return	
 	emit_signal("dealDamage", damage)
 	$playerHitter.call_deferred('monitoring', false)
 	$playerCollision.call_deffered('monitoring', true)

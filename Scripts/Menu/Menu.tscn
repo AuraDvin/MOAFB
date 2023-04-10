@@ -16,10 +16,10 @@ rect_scale = Vector2( 0.8, 0.8 )
 script = ExtResource( 1 )
 
 [node name="GameTitle" type="Label" parent="."]
-margin_left = 633.75
-margin_top = 102.5
-margin_right = 769.75
-margin_bottom = 121.5
+margin_left = 836.25
+margin_top = 123.75
+margin_right = 972.25
+margin_bottom = 142.75
 rect_scale = Vector2( 4, 4 )
 theme = ExtResource( 3 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
@@ -30,10 +30,10 @@ valign = 1
 uppercase = true
 
 [node name="Main" type="VBoxContainer" parent="."]
-margin_left = 15.0
-margin_top = 593.75
-margin_right = 147.0
-margin_bottom = 680.75
+margin_left = 6.25
+margin_top = 751.25
+margin_right = 138.25
+margin_bottom = 838.25
 rect_scale = Vector2( 2.5, 2.5 )
 
 [node name="Start_Button" type="Button" parent="Main"]
@@ -46,10 +46,10 @@ text = "START"
 [node name="CanvasLayer" type="CanvasLayer" parent="Main"]
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Main/CanvasLayer"]
-margin_left = 77.0
-margin_top = 517.0
-margin_right = 209.0
-margin_bottom = 581.0
+margin_left = 70.0
+margin_top = 643.0
+margin_right = 202.0
+margin_bottom = 707.0
 
 [node name="Options_Button" type="Button" parent="Main/CanvasLayer/HBoxContainer"]
 margin_right = 64.0
