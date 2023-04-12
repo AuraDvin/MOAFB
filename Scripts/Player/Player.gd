@@ -16,7 +16,8 @@ const SHOOT_RADIUS: float = 100.00
 var motion: Vector2 = Vector2()
 var canShoot: bool = true
 var health = 100
-
+var minerPoint = Vector2()
+var minerNormal = Vector2()
 # debug
 var debug_sprite = preload("res://icon.png")
 
@@ -28,7 +29,7 @@ var debug_sprite = preload("res://icon.png")
 onready var down_ray = get_node("downRay")
 onready var bullet = preload("res://scripts/bullet/Bullet.tscn")
 onready var mySprite = get_node("AnimatedSprite")
-
+onready var block_mining_timer = $MineBlock
 
 func _ready():
 	mySprite.play("default")
@@ -48,14 +49,17 @@ func _physics_process(_delta):
 
 	if Input.is_action_pressed("move_left"):
 		motion.x -= ACCEL
-		mySprite.play("run")
-#		animationPlayer.play("Run")
+		if not (mySprite.animation == "mineGold" or  mySprite.animation == "mineStone"):
+			mySprite.play("run")
 	elif Input.is_action_pressed("move_right"):
 		motion.x += ACCEL
-		mySprite.play("run")
+		if not (mySprite.animation == "mineGold" or  mySprite.animation == "mineStone"):
+			mySprite.play("run")
 	else:
 		motion.x = lerp(motion.x, 0, 0.2)
-		mySprite.play("default")
+		if not (mySprite.animation == "mineGold" or  mySprite.animation == "mineStone"):
+			mySprite.play("default")
+		
 
 	handleFlip(int(motion.x))
 
@@ -69,15 +73,17 @@ func _physics_process(_delta):
 		emit_signal("move_smart_cursor", tile_location, normal)
 	else:
 		emit_signal("cursor_visibility", false)
-	if Input.is_action_just_pressed("mine") and $miner.is_colliding() and $miner.get_collider().is_in_group('tilemap'):
-		var point = $miner.get_collision_point()
-		var normal = $miner.get_collision_normal()  # to pass for direction
-		if $miner.get_collider() != null:
-
-			# AutoLoad.auraLog(normal)
-			emit_signal("mine_block", point.x, point.y, normal)
-			pass
-
+	if Input.is_action_just_pressed("mine"):
+		mySprite.play("mineStone")
+		if $miner.is_colliding() and $miner.get_collider().is_in_group('tilemap'):
+			var point = $miner.get_collision_point()
+			var normal = $miner.get_collision_normal()  # to pass for direction
+			if $miner.get_collider() != null:
+				block_mining_timer.start()
+				minerPoint = Vector2(point.x, point.y)
+				minerNormal = normal
+	elif not Input.is_action_pressed("mine") and mySprite.animation != "run":
+		mySprite.play("default")
 	if Input.is_action_just_released("move_up"):
 		jumpCut()
 
@@ -151,3 +157,7 @@ func takeDamage(value):
 func _on_shootDelay_timeout():
 	canShoot = true
 
+
+
+func _on_MineBlock_timeout():
+	emit_signal("mine_block", minerPoint.x, minerPoint.y, minerNormal)

@@ -3,10 +3,10 @@ extends KinematicBody2D
 signal dealDamage(value)
 
 const UP = Vector2(0, -1)
-const GRAVITY = 30
+const GRAVITY = 600.00
 const MAXFALLSPD = 600
 const MAXSPD = 375
-const ACCEL = 4
+const ACCEL = 400.00
 const JUMPFORCE = -80
 
 var motion  =  Vector2()
@@ -17,41 +17,24 @@ var should_move = true
 var time_when_stopped = 0
 var damage = 10
 var threshold = 250
+var path = PoolVector2Array() setget set_path
+
 
 onready var level_name = get_tree().get_current_scene().get_name()
-onready var player = get_tree().get_root().get_node_or_null("./" + level_name + "/Player")
+onready var player = get_tree().get_root().get_node_or_null("./" + level_name + "/player")
 onready var stop_timer = $stopMoving
 onready var navi = $NavigationAgent2D
 #onready var navigation = get_tree().get_root().get_node("/root/tempScene/Navigation2d")
 
 func _ready():
-	pass
-#	$AnimatedSprite.play("default")
+	set_process(false)
+	$AnimatedSprite.play("walk")
 	#TODO: Navigation setup 
 
-func _physics_process(_delta):
-	motion += applyGravity(_delta)
-	move_to_target()
+func _process(delta):
+	var move_distance = ACCEL * delta
+	move_along_path(move_distance)
 	
-func applyGravity(_delta):
-	var falling = Vector2()
-	falling.y += GRAVITY * _delta if not is_on_floor() else 0
-	if falling.y > MAXFALLSPD:
-		falling.y = MAXFALLSPD
-	return falling
-
-func move_to_target():
-	var direction = global_position.direction_to(navi.get_next_location())
-	motion = direction * MAXSPD
-	motion = move_and_slide(motion, UP)
-
-func get_target_path(target_pos:Vector2):
-	navi.set_target_location(target_pos)
-
-func _process(_delta):
-	if motion != Vector2.ZERO:
-		$AnimatedSprite.play("walk")
-	pass
 	# return
 # 	var now = Time.get_ticks_msec()
 	
@@ -67,6 +50,53 @@ func _process(_delta):
 # 	detect_wall()
 # 	move_enemy(delta)      # uhu
 	
+func _physics_process(delta):
+	move_and_slide(Vector2(0, GRAVITY * delta))
+	
+#
+#func _physics_process(_delta):
+#	pass
+##	motion += applyGravity(_delta)
+##	move_to_target()
+#
+func move_along_path(distance:float) -> void: 
+	var starting_point = position
+	for i in range(path.size()):
+		var distance_to_next = starting_point.distance_to(path[0])
+		if distance < distance_to_next and distance >= 0.0:
+			position = starting_point.linear_interpolate(path[0], distance/distance_to_next)
+		elif distance < 0.0: 
+			position = path[0]
+			var gravity = Vector2(0, GRAVITY)
+			if not is_on_floor():
+				var moment = move_and_slide(gravity, UP)
+			set_process(false)
+			break
+		distance -= distance_to_next
+		starting_point = path[0]
+		path.remove(0)
+	
+func set_path(value: PoolVector2Array) -> void:
+	path = value
+	if value.size() == 0:
+		return
+	set_process(true)
+
+func applyGravity(_delta):
+	var falling = Vector2()
+	falling.y += GRAVITY * _delta if not is_on_floor() else 0
+	if falling.y > MAXFALLSPD:
+		falling.y = MAXFALLSPD
+	return falling
+
+func move_to_target():
+	var direction = global_position.direction_to(navi.get_next_location())
+	motion = direction * MAXSPD
+	motion = move_and_slide(motion, UP)
+
+func get_target_path(target_pos:Vector2):
+	navi.set_target_location(target_pos)
+
 
 func detect_wall():
 	if $wall.is_colliding() and $wall.get_collider().is_in_group('tilemap'):
