@@ -1,0 +1,79 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Scripts/Menu/MenuTheme.tres" type="Theme" id=1]
+[ext_resource path="res://Scripts/Menu/moafbFont.tres" type="DynamicFont" id=2]
+[ext_resource path="res://Assets/Scenes/End Level.gd" type="Script" id=3]
+[ext_resource path="res://Assets/gold_icon.png" type="Texture" id=4]
+
+[node name="End Level" type="Node2D"]
+script = ExtResource( 3 )
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Title" type="Label" parent="CanvasLayer"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -219.0
+margin_right = 219.0
+margin_bottom = 41.0
+theme = ExtResource( 1 )
+custom_fonts/font = ExtResource( 2 )
+text = "YAY YOU ESCAPED!"
+uppercase = true
+
+[node name="Back_to_main" type="Button" parent="CanvasLayer"]
+visible = false
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -228.0
+margin_top = -100.0
+margin_right = 228.0
+margin_bottom = -64.0
+theme = ExtResource( 1 )
+custom_fonts/font = ExtResource( 2 )
+text = "BACK TO MAIN MENU"
+
+[node name="CenterContainer" type="MarginContainer" parent="CanvasLayer"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -216.0
+margin_top = -20.5
+margin_right = 216.0
+margin_bottom = 20.5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer"]
+margin_right = 432.0
+margin_bottom = 41.0
+
+[node name="You_collected" type="Label" parent="CanvasLayer/CenterContainer/HBoxContainer"]
+margin_right = 388.0
+margin_bottom = 41.0
+custom_fonts/font = ExtResource( 2 )
+text = "You collected "
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/CenterContainer/HBoxContainer"]
+margin_left = 392.0
+margin_right = 428.0
+margin_bottom = 41.0
+rect_min_size = Vector2( 36, 36 )
+texture = ExtResource( 4 )
+expand = true
+
+[node name="Gold_Collected" type="Label" parent="CanvasLayer/CenterContainer/HBoxContainer"]
+margin_left = 432.0
+margin_right = 432.0
+margin_bottom = 41.0
+rect_min_size = Vector2( 0, 36 )
+custom_fonts/font = ExtResource( 2 )
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.6
+one_shot = true
+
+[connection signal="finished_writing" from="." to="." method="_on_End_Level_finished_writing"]
+[connection signal="pressed" from="CanvasLayer/Back_to_main" to="." method="_on_Back_to_main_pressed"]
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

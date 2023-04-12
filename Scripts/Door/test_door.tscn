@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Scripts/Player/player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Scripts/Door/door.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Scripts/Door/test_door.gd" type="Script" id=3]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 400, 20 )
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource( 3 )
+
+[node name="Player" parent="." instance=ExtResource( 1 )]
+position = Vector2( -387, 62 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+position = Vector2( -880, 562 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2( 718, 8 )
+shape = SubResource( 1 )
+
+[node name="Door" parent="." instance=ExtResource( 2 )]
+position = Vector2( 103, 484 )
+
+[connection signal="left_level" from="Player" to="." method="_on_Player_left_level"]
+[connection signal="near_door" from="Door" to="Player" method="_on_Door_near_door"]
+[connection signal="not_near_door" from="Door" to="Player" method="_on_Door_not_near_door"]

@@ -5,8 +5,9 @@ extends Node
 #
 #var test = 0
 var doLog = false
+var gold = 0
+var spawnable_locations = []
 #var rng = RandomNumberGenerator.new()
-var spawnable_locations = [Vector2.ZERO]
 #var music_volume = 0.40
 #var music_muted = false
 
@@ -17,23 +18,22 @@ func _ready():
 
 #func increase_test(amount = 1):
 #	test += amount
-#	print(test)
+#	print_debug(test)
 
-func add_spawnable(_location: Vector2):
-	pass
-#	var above = Vector2(location.x, location.y - 1)
-#	var below = Vector2(location.x, location.y + 1)
-#
-#	if spawnable_locations.has(above): # nad njim
-#		spawnable_locations.erase(above)
-#		spawnable_locations.append(location)
-#	elif not spawnable_locations.has(below): # pod njim
-#		spawnable_locations.append(location)
+func add_spawnable(location: Vector2):
+	var above = Vector2(location.x, location.y - 1)
+	var below = Vector2(location.x, location.y + 1)
+
+	if spawnable_locations.has(above): # nad njim
+		spawnable_locations.erase(above)
+		spawnable_locations.append(location)
+	elif not spawnable_locations.has(below): # pod njim
+		spawnable_locations.append(location)
 
 func show_spawnable():
 	pass
 #	for i in spawnable_locations:
-#		print(i)
+#		print_debug(i)
 
 func get_last_spawnable_index():
 	return spawnable_locations.size() - 1
@@ -41,4 +41,10 @@ func get_last_spawnable_index():
 func auraLog(_any):
 	pass
 #	if false:
-#		print(any)
+#		print_debug(any)
+
+func addGold():
+	gold += 1
+
+func getGold():
+	return gold

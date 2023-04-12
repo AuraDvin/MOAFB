@@ -83,7 +83,7 @@ func spawn_player(location):
 	player.set_global_position(location)
 
 func _on_caveGenerator_finished_generating():
-	print (AutoLoad.spawnable_locations)
+#	print_debug(AutoLoad.spawnable_locations)
 	pass 
 
 
@@ -92,6 +92,10 @@ func _on_Area2D_body_entered(body):
 	position.y = -100
 	body.set_global_position(position)
 
+
+
+func _on_Player_left_level():
+	get_tree().change_scene(\"res://Assets/Scenes/End Level.tscn\")
 "
 
 [sub_resource type="RectangleShape2D" id=3]
@@ -152,6 +156,7 @@ margin_bottom = 3009.0
 
 [connection signal="clear_area_around_player_spawn" from="." to="Navigation2D/TileMap/caveGenerator" method="_on_tempScene_clear_area_around_player_spawn"]
 [connection signal="cursor_visibility" from="Player" to="Navigation2D/TileMap/caveGenerator" method="_on_Player_cursor_visibility"]
+[connection signal="left_level" from="Player" to="." method="_on_Player_left_level"]
 [connection signal="mine_block" from="Player" to="Navigation2D/TileMap/caveGenerator" method="_on_Player_mine_block"]
 [connection signal="move_smart_cursor" from="Player" to="Navigation2D/TileMap/caveGenerator" method="_on_Player_move_smart_cursor"]
 [connection signal="finished_generating" from="Navigation2D/TileMap/caveGenerator" to="." method="_on_caveGenerator_finished_generating"]

@@ -25,7 +25,7 @@ var rndmMin = 10000000  # 10_000_000
 var rndmMax = 99999999  # 99_999_999
 var smart_cursor
 var gold_locations = []
-
+var banana = []
 
 class test:
 	static func moment (a, b) -> bool:
@@ -36,12 +36,12 @@ class test:
 #var debug_sprite = preload("res://icon.png") # neki
 
 func _ready():
-#	print("cave generator ready")
+#	print_debug("cave generator ready")
 	rng.randomize()
 	world_seed = String(rng.randi_range(rndmMin, rndmMax))
 	tile_map = get_parent() as TileMap
 	if tile_map == null:
-		print(MISSING_TILE_MAP_ERROR)
+		print_debug(MISSING_TILE_MAP_ERROR)
 		return
 	clear()
 	generate()
@@ -99,13 +99,14 @@ func generate() -> void:
 					var local = tile_map.to_local(tile_position)
 					var world = tile_map.map_to_world(local)
 					var global = tile_map.to_global(world)  + Vector2(0, 2 * tile_map.cell_size.y - 4)
-		
+					gold_ore_moment.name = str(tile_position)
 					gold_ore_moment.scale *= 2
 					gold_ore_moment.texture = ORE_TEXTURE
 					gold_ore_moment.centered = false
 					gold_ore_moment.z_index = 2
 					gold_ore_moment.set_global_position(global)
-
+					gold_locations.erase(tile_position)
+					banana.push_back(tile_map)
 					call_deferred("add_child", gold_ore_moment)
 			else:
 				AutoLoad.add_spawnable(Vector2(x, y))
@@ -127,7 +128,7 @@ func generate() -> void:
 	# 		# gold_ore_moment.set_global_position(local)
 	# 		gold_ore_moment.set_global_position(global)
 	# 		get_tree().get_root().call_deferred("add_child", gold_ore_moment)
-	# print(moments)
+	# print_debug(moments)
 	emit_signal("finished_generating")
 
 # var moments = []
@@ -175,15 +176,15 @@ func _removeTile(x: int, y: int) -> void:
 	tile_map.set_cell(position.x, position.y, -1)
 	tile_map.update_bitmask_area(position)
 
-	if gold_locations.has(position):
-		print("calculated")
-		print("####\"", gold_locations.find(position), "\"####\n")
-		print("$$$$\"", gold_locations[gold_locations.find(position)], "\"$$$$$\n")
+	if banana.has(position):
+		print_debug("calculated")
+		print_debug("####\"", banana.find(position), "\"####\n")
+		print_debug("$$$$\"", banana[banana.find(position)], "\"$$$$$\n")
 
-	if gold_locations.has(local):
-		print("local")
-		print("####\"", gold_locations.find(local), "\"####\n")
-		print("$$$$\"", gold_locations[gold_locations.find(local)], "\"$$$$$\n")
+	if banana.has(local):
+		print_debug("local")
+		print_debug("####\"", banana.find(local), "\"####\n")
+		print_debug("$$$$\"", banana[banana.find(local)], "\"$$$$$\n")
 
 
 func _on_Player_mine_block(x, y, direction):
@@ -208,17 +209,14 @@ func _on_Player_move_smart_cursor(position, direction):
 func _on_Player_cursor_visibility(yes):
 	smart_cursor.visible = yes
 
-func _on_tempScene_clear_area_around_player_spawn(_spawn_location):
-	pass
-	# var location = tile_map.to_local(tile_map.world_to_map(spawn_location))
-	# var x = location.x - 4
-	# var y = location.y - 4
-	# while (x < location.x + 4):
-	# 	while (y < location.y + 4):
-	# 		var deleteBlockPosition = Vector2(x, y)
-	# 		tile_map.set_cell(x, y, -1)
-	# 		tile_map.update_bitmask_area(deleteBlockPosition)
-	# 		y += 1
-	# 	x += 1
-	# print("Finished")
+func _on_tempScene_clear_area_around_player_spawn(spawn_location):
+	var map = tile_map.world_to_map(spawn_location)
+	var location = tile_map.to_local(map)
+	for x in range (location.x - 4, location.x + 4):
+		for y in range(location.y - 4, location.y + 4):
+			tile_map.set_cell(x, y, -1)
+			tile_map.update_bitmask_area(Vector2(x,y))
+			y += 1
+		x += 1
+	print_debug("Finished")
 

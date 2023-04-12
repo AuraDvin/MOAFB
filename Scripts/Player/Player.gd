@@ -4,6 +4,7 @@ signal mine_block(x, y, direction)
 signal health_change(newHealth)
 signal move_smart_cursor(position, normal)
 signal cursor_visibility(yes)
+signal left_level
 
 const UP: Vector2 = Vector2(0, -1)
 const GRAVITY: int = 30
@@ -18,8 +19,9 @@ var canShoot: bool = true
 var health = 100
 var minerPoint = Vector2()
 var minerNormal = Vector2()
+var can_leave = false
 # debug
-var debug_sprite = preload("res://icon.png")
+#var debug_sprite = preload("res://icon.png")
 
 
 #onready var slope_ray_right = get_node("slopeRayRight")
@@ -108,6 +110,13 @@ func _input(event) -> void:
 	shootBullet()
 
 
+func _unhandled_input(event):
+	if not event is InputEventKey:
+		return
+	if not event.pressed and event.scancode == KEY_E and can_leave:
+		emit_signal("left_level")
+		queue_free()
+
 func shootBullet():
 	var mouse_pos = get_global_mouse_position()
 	var distance = global_transform.origin.distance_to(mouse_pos)
@@ -161,3 +170,11 @@ func _on_shootDelay_timeout():
 
 func _on_MineBlock_timeout():
 	emit_signal("mine_block", minerPoint.x, minerPoint.y, minerNormal)
+
+
+func _on_Door_near_door():
+	can_leave = true
+
+
+func _on_Door_not_near_door():
+	can_leave = false
