@@ -64,5 +64,19 @@ custom_fonts/font = ExtResource( 4 )
 text = "0"
 valign = 1
 
+[node name="Smart Cursor Position" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -45.0
+margin_top = -7.0
+margin_right = 147.0
+margin_bottom = 42.0
+rect_min_size = Vector2( 40, 14 )
+theme = ExtResource( 3 )
+text = "This is a test"
+uppercase = true
+
 [connection signal="pressed" from="Button2" to="ProgressBar" method="_on_Button2_pressed"]
 [connection signal="pressed" from="Button" to="ProgressBar" method="_on_Button_pressed"]

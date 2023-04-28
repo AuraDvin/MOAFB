@@ -300,8 +300,16 @@ step = 1.0
 value = 40.0
 script = ExtResource( 7 )
 
+[node name="smart_cursor_position" type="Label" parent="Camera2D/UI/HUD"]
+margin_right = 40.0
+margin_bottom = 14.0
+theme = ExtResource( 8 )
+text = "THIS IS A TEST"
+uppercase = true
+
 [node name="MineBlock" type="Timer" parent="."]
 wait_time = 1.2
+one_shot = true
 
 [connection signal="health_change" from="." to="Camera2D/UI/HUD/Health_HUD/HealthBar" method="_on_Player_health_change"]
 [connection signal="timeout" from="shootDelay" to="." method="_on_shootDelay_timeout"]

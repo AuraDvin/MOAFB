@@ -1,6 +1,7 @@
 extends Node
 
 signal finished_generating
+signal new_world_position_of_smart_cursor (new_position_of_cursor)
 #signal moment(x,y)
 
 const MISSING_TILE_MAP_ERROR = "Tile Map is not defined! Make sure to set this scene as a child of a tile map node in your tree"
@@ -94,19 +95,22 @@ func generate() -> void:
 			if value < noise_treshold:
 				_set_autotile(x, y)
 				var tile_position = Vector2(x, y - 2) * 0.25 * tile_map.cell_size
-				if gold_locations.has(tile_position):
+				if gold_locations.has(tile_position) and banana.size() < 20:
 					var gold_ore_moment = Sprite.new()
 					var local = tile_map.to_local(tile_position)
 					var world = tile_map.map_to_world(local)
 					var global = tile_map.to_global(world)  + Vector2(0, 2 * tile_map.cell_size.y - 4)
-					gold_ore_moment.name = str(tile_position)
+					
+					gold_ore_moment.name = str(global)
 					gold_ore_moment.scale *= 2
 					gold_ore_moment.texture = ORE_TEXTURE
 					gold_ore_moment.centered = false
 					gold_ore_moment.z_index = 2
 					gold_ore_moment.set_global_position(global)
 					gold_locations.erase(tile_position)
-					banana.push_back(tile_map)
+					
+					banana.push_back(global)
+					
 					call_deferred("add_child", gold_ore_moment)
 			else:
 				AutoLoad.add_spawnable(Vector2(x, y))
@@ -173,19 +177,18 @@ func _removeTile(x: int, y: int) -> void:
 	var local = tile_map.to_local(global)
 	var position = tile_map.world_to_map(local)
 	
+	# Delete the local tile
 	tile_map.set_cell(position.x, position.y, -1)
 	tile_map.update_bitmask_area(position)
-
-	if banana.has(position):
-		print_debug("calculated")
-		print_debug("####\"", banana.find(position), "\"####\n")
-		print_debug("$$$$\"", banana[banana.find(position)], "\"$$$$$\n")
-
-	if banana.has(local):
-		print_debug("local")
-		print_debug("####\"", banana.find(local), "\"####\n")
-		print_debug("$$$$\"", banana[banana.find(local)], "\"$$$$$\n")
-
+	
+	# Now to get the position of the tile in real world 
+	var world_location = tile_map.map_to_world(position)
+	var global_location = tile_map.to_global(world_location)
+		
+	if banana.has(global_location):
+		banana.erase(banana[banana.find(global_location)])
+		get_node("./" + str(global_location)).queue_free()
+		AutoLoad.addGold()
 
 func _on_Player_mine_block(x, y, direction):
 	if direction.x > 0:
@@ -205,6 +208,8 @@ func _on_Player_move_smart_cursor(position, direction):
 	var world = tile_map.map_to_world(tile)
 	var global = tile_map.to_global(world)
 	smart_cursor.set_global_position(global)
+	emit_signal("new_world_position_of_smart_cursor", global)
+	
 
 func _on_Player_cursor_visibility(yes):
 	smart_cursor.visible = yes
@@ -218,5 +223,5 @@ func _on_tempScene_clear_area_around_player_spawn(spawn_location):
 			tile_map.update_bitmask_area(Vector2(x,y))
 			y += 1
 		x += 1
-	print_debug("Finished")
+#	print_debug("Finished")
 

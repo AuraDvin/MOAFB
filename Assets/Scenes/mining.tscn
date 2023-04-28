@@ -20,6 +20,11 @@ var door_texture = preload(\"res://Assets/door-Sheet.png\")
 onready var player = $Player
 onready var nav = $Navigation2D
 
+onready var map_cam = $Camera2D
+onready var map_cam_filter = $Camera2D/ColorRect
+onready var player_cam = $Player/Camera2D
+onready var exit_door = load(\"res://Scripts/Door/door.tscn\")
+
 func _on_Timer_timeout():
 #	print(\"timer call\")
 #	get_tree().call_group(\"Enemy\", 'get_target_path', player.global_position)
@@ -31,18 +36,23 @@ func _on_Timer_timeout():
 
 
 
+
 func _input(_event):
 	if Input.is_action_just_released(\"Map\"):
-		$Camera2D.current = not $Camera2D.current
-		$Camera2D/ColorRect.visible = not $Camera2D/ColorRect.visible
-		if not $Camera2D.current:
-			$Player/Camera2D.current = true
+		map_cam.current = not map_cam.current
+		map_cam_filter.visible = not map_cam_filter.visible
+		if not map_cam.current:
+			player_cam.current = true
 
 
 func _ready():
+	
 	var player_spawn = AutoLoad.spawnable_locations[0]
 	AutoLoad.spawnable_locations.remove(0)
 	spawn_player(player_spawn)
+	rng.randomize()
+	
+	place_door()
 #
 #	for i in range(1):
 #		rng.randomize()
@@ -82,19 +92,26 @@ func spawn_player(location):
 	emit_signal(\"clear_area_around_player_spawn\", location)
 	player.set_global_position(location)
 
-func _on_caveGenerator_finished_generating():
-#	print_debug(AutoLoad.spawnable_locations)
-	pass 
+func place_door():
+	var door_position = rng.randi_range(0, AutoLoad.spawnable_locations.size())
+	var location = AutoLoad.spawnable_locations[door_position]
+	var door_instance = exit_door.instance()
+	
+	AutoLoad.spawnable_locations.erase(location)
 
+	door_instance.connect(\"near_door\", player, \"_on_Door_near_door\")
+	door_instance.connect(\"not_near_door\", player, \"_on_Door_not_near_door\")
+	
+	get_tree().get_root().call_deferred(\"add_child\", door_instance)
+	door_instance.set_global_position(location)
 
 func _on_Area2D_body_entered(body):
 	var position = body.get_global_position()
 	position.y = -100
 	body.set_global_position(position)
 
-
-
 func _on_Player_left_level():
+	get_tree().get_root().get_node(\"Door\").queue_free()
 	get_tree().change_scene(\"res://Assets/Scenes/End Level.tscn\")
 "
 
@@ -149,10 +166,10 @@ zoom = Vector2( 10, 10 )
 visible = false
 light_mask = 2
 material = SubResource( 4 )
-margin_left = -5108.0
-margin_top = -2979.0
-margin_right = 5129.0
-margin_bottom = 3009.0
+margin_left = -6403.0
+margin_top = -3589.0
+margin_right = 6501.0
+margin_bottom = 3542.0
 
 [connection signal="clear_area_around_player_spawn" from="." to="Navigation2D/TileMap/caveGenerator" method="_on_tempScene_clear_area_around_player_spawn"]
 [connection signal="cursor_visibility" from="Player" to="Navigation2D/TileMap/caveGenerator" method="_on_Player_cursor_visibility"]
@@ -160,5 +177,6 @@ margin_bottom = 3009.0
 [connection signal="mine_block" from="Player" to="Navigation2D/TileMap/caveGenerator" method="_on_Player_mine_block"]
 [connection signal="move_smart_cursor" from="Player" to="Navigation2D/TileMap/caveGenerator" method="_on_Player_move_smart_cursor"]
 [connection signal="finished_generating" from="Navigation2D/TileMap/caveGenerator" to="." method="_on_caveGenerator_finished_generating"]
+[connection signal="new_world_position_of_smart_cursor" from="Navigation2D/TileMap/caveGenerator" to="Player" method="_on_caveGenerator_new_world_position_of_smart_cursor"]
 [connection signal="body_entered" from="Area2D" to="." method="_on_Area2D_body_entered"]
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

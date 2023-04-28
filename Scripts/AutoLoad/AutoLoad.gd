@@ -1,24 +1,13 @@
 extends Node
-#
-#const MAX_VOLUME = 2 #db
-#const MIN_VOLUME = -400 #db
-#
-#var test = 0
+
+signal addedGold (amount)
+
 var doLog = false
 var gold = 0
 var spawnable_locations = []
-#var rng = RandomNumberGenerator.new()
-#var music_volume = 0.40
-#var music_muted = false
-
-#onready var music_player = $MusicPlayer
 
 func _ready():
 	pass  # Replace with function body.
-
-#func increase_test(amount = 1):
-#	test += amount
-#	print_debug(test)
 
 func add_spawnable(location: Vector2):
 	var above = Vector2(location.x, location.y - 1)
@@ -32,19 +21,13 @@ func add_spawnable(location: Vector2):
 
 func show_spawnable():
 	pass
-#	for i in spawnable_locations:
-#		print_debug(i)
 
 func get_last_spawnable_index():
 	return spawnable_locations.size() - 1
 
-func auraLog(_any):
-	pass
-#	if false:
-#		print_debug(any)
-
 func addGold():
 	gold += 1
+	emit_signal("addedGold", gold)
 
 func getGold():
 	return gold

@@ -23,21 +23,17 @@ var can_leave = false
 # debug
 #var debug_sprite = preload("res://icon.png")
 
-
-#onready var slope_ray_right = get_node("slopeRayRight")
-#onready var slope_ray_left = get_node("slopeRayLeft")
-#onready var Sprite = get_node("Sprite")
-#onready var animationPlayer = get_node("AnimationPlayer")
 onready var down_ray = get_node("downRay")
 onready var bullet = preload("res://scripts/bullet/Bullet.tscn")
 onready var mySprite = get_node("AnimatedSprite")
 onready var block_mining_timer = $MineBlock
+onready var smart_cursor_UI_label = $Camera2D/UI/HUD/smart_cursor_position
+onready var gold_counter_label = $Camera2D/UI/HUD/Gold_HUD/Gold_inventory
 
 func _ready():
 	mySprite.play("default")
 	emit_signal("health_change", health)
-#	debug_sprite.scale = Vector2(0.4, 0.4)
-	pass
+	AutoLoad.connect("addedGold", self, "_on_Gold_updated")
 
 func _physics_process(_delta):
 	if not is_on_floor():
@@ -71,9 +67,11 @@ func _physics_process(_delta):
 	if $miner.is_colliding() and $miner.get_collider().is_in_group('tilemap'):
 		var tile_location = $miner.get_collision_point()
 		var normal = $miner.get_collision_normal()
-		emit_signal("cursor_visibility", true)
-		emit_signal("move_smart_cursor", tile_location, normal)
-	else:
+		
+		if mySprite.animation != "mineStone":
+			emit_signal("cursor_visibility", true)
+			emit_signal("move_smart_cursor", tile_location, normal)
+	elif mySprite.animation != "mineStone":
 		emit_signal("cursor_visibility", false)
 	if Input.is_action_just_pressed("mine"):
 		mySprite.play("mineStone")
@@ -107,7 +105,7 @@ func _input(event) -> void:
 	
 	if not event is InputEventMouseButton or not canShoot or event.get_button_index() != 1:
 		return
-	shootBullet()
+#	shootBullet()
 
 
 func _unhandled_input(event):
@@ -152,10 +150,10 @@ func checkFallingAnim(y: float):
 		return 0
 	if y > 0:
 		if not down_ray.is_colliding():
-#			animationPlayer.play("Fall")
+			# Play falling animation
 			pass
 		return 1
-#	animationPlayer.play("Jump")
+	# Play jumping animation
 	return 0
 
 func takeDamage(value):
@@ -178,3 +176,9 @@ func _on_Door_near_door():
 
 func _on_Door_not_near_door():
 	can_leave = false
+	
+func _on_caveGenerator_new_world_position_of_smart_cursor(new_position_of_cursor):
+	smart_cursor_UI_label.text = str(new_position_of_cursor)
+
+func _on_Gold_updated(amount):
+	gold_counter_label.text = str(amount)
