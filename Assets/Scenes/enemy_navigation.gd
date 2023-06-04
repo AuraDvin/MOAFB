@@ -8,5 +8,5 @@ onready var enemy = $enemy
 func _ready():
 	pass # Replace with function body.
 
-func _on_moment_timeout():
-	enemy.get_target_path(player.position)
+#func _on_moment_timeout():
+#	enemy.get_target_path(player.position)
