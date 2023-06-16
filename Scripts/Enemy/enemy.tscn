@@ -155,7 +155,7 @@ one_shot = true
 one_shot = true
 
 [node name="wall" type="RayCast2D" parent="." groups=["Enemy"]]
-position = Vector2( -44, 74 )
+position = Vector2( -44, 72 )
 rotation = 1.5708
 enabled = true
 
