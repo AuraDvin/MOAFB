@@ -26,4 +26,5 @@ tile_data = PoolIntArray( 196591, 0, 0, 196592, 0, 1, 196593, 0, 2, 262127, 0, 6
 
 [node name="moment" type="Timer" parent="."]
 
+[connection signal="dealDamage" from="enemy" to="Player" method="_on_enemy_dealDamage"]
 [connection signal="timeout" from="moment" to="." method="_on_moment_timeout"]

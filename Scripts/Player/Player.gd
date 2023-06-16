@@ -33,7 +33,7 @@ onready var gold_counter_label = $Camera2D/UI/HUD/Gold_HUD/Gold_inventory
 func _ready():
 	mySprite.play("default")
 	emit_signal("health_change", health)
-	AutoLoad.connect("addedGold", self, "_on_Gold_updated")
+	var _returns_from_connect = AutoLoad.connect("addedGold", self, "_on_Gold_updated")
 
 func _physics_process(_delta):
 	if not is_on_floor():
@@ -164,15 +164,11 @@ func takeDamage(value):
 func _on_shootDelay_timeout():
 	canShoot = true
 
-
-
 func _on_MineBlock_timeout():
 	emit_signal("mine_block", minerPoint.x, minerPoint.y, minerNormal)
 
-
 func _on_Door_near_door():
 	can_leave = true
-
 
 func _on_Door_not_near_door():
 	can_leave = false
@@ -182,3 +178,7 @@ func _on_caveGenerator_new_world_position_of_smart_cursor(new_position_of_cursor
 
 func _on_Gold_updated(amount):
 	gold_counter_label.text = str(amount)
+
+
+func _on_enemy_dealDamage(value):
+	takeDamage(value)

@@ -2,8 +2,8 @@ extends Node2D
 
 
 #onready var navigation_agent = $NavigationAgent2D
-onready var player = $Player
-onready var enemy = $enemy
+#onready var player = $Player
+#onready var enemy = $enemy
 
 func _ready():
 	pass # Replace with function body.

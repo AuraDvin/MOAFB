@@ -17,22 +17,27 @@ var should_move = true
 var time_when_stopped = 0
 var damage = 10
 var threshold = 250
-#var path = PoolVector2Array() setget set_path
 var position_old = Vector2(0, 0)
+var playerless = false
+var actual_position
+var climbing = false
 
 onready var level_name = get_tree().get_current_scene().get_name()
 onready var player = get_tree().get_root().get_node_or_null("./" + level_name + "/Player")
 onready var stop_timer = $stopMoving
 onready var navi = $NavigationAgent2D
 onready var wall_detect = $wall
-#onready var navigation = get_tree().get_root().get_node("/root/tempScene/Navigation2d")
+onready var animation = $AnimatedSprite
 
 func _ready():
-	set_process(false)
-	$AnimatedSprite.play("walk")
+#	set_process(false)
+	actual_position = position
+	animation.play("walk")
 	#TODO: Navigation setup 
 #
-#func _process(delta):
+func _process(_delta):
+	pass
+		
 #	var move_distance = ACCEL * delta
 #	move_along_path(move_distance)
 	
@@ -52,12 +57,16 @@ func _ready():
 # 	move_enemy(delta)      # uhu
 	
 func _physics_process(delta):
+	if playerless: 
+		return
+		
 	var finder = find_player()
 	var move_man = Vector2(0, 0)
 	
 	if not finder:
 		if finder == null:
 			print_debug("where player D:")
+			playerless = true
 		return
 	
 	move_man += make_path()
@@ -67,11 +76,17 @@ func _physics_process(delta):
 		
 	if detect_wall():
 		move_man += Vector2(0, -100)
+#		move_man.x = move_man.normalized().x
+		climbing = true
 	else: 
+		climbing = false
 		move_man += applyGravity(delta)
 #		pass
-	if move_man.x > 0 and position_old.x < 0 or move_man.x < 0 and position_old.x > 0 : 
-		self.scale.x = -1
+#	if move_man.x > 0 and position_old.x < 0 or move_man.x < 0 and position_old.x > 0 : 
+	if not climbing and sign(move_man.x) != sign(position_old.x):
+		self.scale.x *= -1
+	elif climbing:
+		move_man.x *= sign(position_old.x)
 	position_old = move_man
 	move_man = move_and_slide(move_man, UP)
 
@@ -79,6 +94,10 @@ func make_path():
 	var player_position = player.position
 #	var delta_position = Vector2(player_position.x - position.x, player_position.y - position.y).normalized() * 400
 	var delta_position = Vector2(player_position.x - position.x, 0).normalized() * 400
+#	Hopefully now you won't give up climbing
+#	if climbing:
+#		return Vector2(player_position.x - position.x, 0).normalized()
+		
 	return delta_position
 	
 func find_player():
@@ -120,41 +139,46 @@ func detect_ledge(_delta):
 			should_move = false
 
 func hit():
-	$AnimatedSprite.play("Attack")
+	animation.play("bite")
 	$playerCollision.call_deferred('set_monitoring', false)
 	$hit.start()
 	
 func end_hit():
-	$playerHitter.call_deffered('monitoring', false)
+	$playerHitter.call_deffered('set_monitoring', false)
 
 func _on_playerCollision_body_entered(body):
 	if not body.is_in_group('player'):
-		$playerCollision.call_deferred('monitoring', false)
+#		$playerCollision.call_deferred('monitoring', false)
 		return
-	
+	print_debug('this is a test :D')
 	hit()
-
-func _on_stopMoving_timeout():
-	scale.x = -scale.x
-	is_moving_left = !is_moving_left
-	motion.x *= 0.4
-	should_move = true
-	time_when_stopped = Time.get_ticks_msec()
+#
+#func _on_stopMoving_timeout():
+#	scale.x = -scale.x
+#	is_moving_left = !is_moving_left
+#	motion.x *= 0.4
+#	should_move = true
+#	time_when_stopped = Time.get_ticks_msec()
 
 
 func _on_hit_timeout() -> void:
-	$playerHitter.call_deferred('monitoring', true)
+	$playerHitter.call_deferred('set_monitoring', true)
 	pass
 
 
 func _on_playerHitter_body_entered(body):
 	if not body.is_in_group('player'):
-		return	
+		animation.play("walk")
+		return
 	emit_signal("dealDamage", damage)
-	$playerHitter.call_deferred('monitoring', false)
-	$playerCollision.call_deffered('monitoring', true)
+	$WaitBeforeHit.start()
+	$playerHitter.call_deferred('set_monitoring', false)
+	animation.play("walk")
+	print_debug("Dealt damage to player ... me thinks")
 
-
+func _on_WaitBeforeHit_timeout():
+	$playerCollision.call_deferred('set_monitoring', true)
+	
 #func _physics_process(_delta):
 #	pass
 ##	motion += applyGravity(_delta)
@@ -218,6 +242,9 @@ func _on_playerHitter_body_entered(body):
 #	$AnimatedSprite.play("walk")
 
 # returns true if player is close enough
+
+
+
 
 
 

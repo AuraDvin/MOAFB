@@ -119,7 +119,6 @@ cast_to = Vector2( 0, 68 )
 
 [node name="playerCollision" type="Area2D" parent="."]
 collision_layer = 0
-monitoring = false
 monitorable = false
 
 [node name="CanAttackPlayer" type="CollisionShape2D" parent="playerCollision"]
@@ -154,6 +153,10 @@ one_shot = true
 [node name="hit" type="Timer" parent="."]
 one_shot = true
 
+[node name="WaitBeforeHit" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
 [node name="wall" type="RayCast2D" parent="." groups=["Enemy"]]
 position = Vector2( -44, 72 )
 rotation = 1.5708
@@ -165,3 +168,4 @@ enabled = true
 [connection signal="body_entered" from="playerHitter" to="." method="_on_playerHitter_body_entered"]
 [connection signal="timeout" from="stopMoving" to="." method="_on_stopMoving_timeout"]
 [connection signal="timeout" from="hit" to="." method="_on_hit_timeout"]
+[connection signal="timeout" from="WaitBeforeHit" to="." method="_on_WaitBeforeHit_timeout"]
