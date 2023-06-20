@@ -97,14 +97,14 @@ func _input(event) -> void:
 		$miner.look_at(get_global_mouse_position())
 		$miner.rotate(-PI * 0.5)
 	
-	if event is InputEventKey and not event.pressed:
-		if event.scancode == KEY_J:
-			takeDamage(10)
-		elif event.scancode == KEY_K:
-			takeDamage(-10)
-	
-	if not event is InputEventMouseButton or not canShoot or event.get_button_index() != 1:
-		return
+#	if event is InputEventKey and not event.pressed:
+#		if event.scancode == KEY_J:
+#			takeDamage(10)
+#		elif event.scancode == KEY_K:
+#			takeDamage(-10)
+#
+#	if not event is InputEventMouseButton or not canShoot or event.get_button_index() != 1:
+#		return
 #	shootBullet()
 
 
@@ -160,6 +160,9 @@ func takeDamage(value):
 	health -= value
 	health = clamp(health, 0, 100)
 	emit_signal("health_change", health)
+	if health <= 0:
+		die_on_level()
+	
 
 func _on_shootDelay_timeout():
 	canShoot = true
@@ -182,3 +185,7 @@ func _on_Gold_updated(amount):
 
 func _on_enemy_dealDamage(value):
 	takeDamage(value)
+
+func die_on_level():
+	emit_signal("left_level")
+	queue_free()
