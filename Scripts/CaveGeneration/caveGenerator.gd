@@ -1,6 +1,6 @@
 extends Node
 
-signal finished_generating
+#signal finished_generating
 signal new_world_position_of_smart_cursor (new_position_of_cursor)
 #signal moment(x,y)
 
@@ -133,7 +133,7 @@ func generate() -> void:
 	# 		gold_ore_moment.set_global_position(global)
 	# 		get_tree().get_root().call_deferred("add_child", gold_ore_moment)
 	# print_debug(moments)
-	emit_signal("finished_generating")
+#	emit_signal("finished_generating")
 
 # var moments = []
 

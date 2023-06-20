@@ -1,4 +1,4 @@
-[gd_scene load_steps=53 format=2]
+[gd_scene load_steps=55 format=2]
 
 [ext_resource path="res://Assets/gold_icon.png" type="Texture" id=1]
 [ext_resource path="res://Scripts/Player/Player.gd" type="Script" id=2]
@@ -199,6 +199,12 @@ animations = [ {
 "speed": 10.0
 } ]
 
+[sub_resource type="RectangleShape2D" id=75]
+extents = Vector2( 66, 50.25 )
+
+[sub_resource type="RectangleShape2D" id=76]
+extents = Vector2( 112.5, 32.625 )
+
 [sub_resource type="RectangleShape2D" id=7]
 extents = Vector2( 44.5, 10 )
 
@@ -227,6 +233,23 @@ cast_to = Vector2( 0, 100 )
 [node name="shootDelay" type="Timer" parent="."]
 wait_time = 0.42
 
+[node name="hitArea" type="Area2D" parent="."]
+visible = false
+monitoring = false
+monitorable = false
+
+[node name="hitShape" type="CollisionShape2D" parent="hitArea"]
+position = Vector2( 100, 18.75 )
+shape = SubResource( 75 )
+
+[node name="hitShape2" type="CollisionShape2D" parent="hitArea"]
+position = Vector2( -100, 18.75 )
+shape = SubResource( 75 )
+
+[node name="hitShape3" type="CollisionShape2D" parent="hitArea"]
+position = Vector2( -0.5, -63.375 )
+shape = SubResource( 76 )
+
 [node name="stompArea" type="Area2D" parent="."]
 visible = false
 
@@ -249,7 +272,6 @@ smoothing_enabled = true
 smoothing_speed = 10.0
 
 [node name="UI" type="Node2D" parent="Camera2D"]
-visible = false
 z_index = 4
 
 [node name="HUD" type="CanvasLayer" parent="Camera2D/UI"]
@@ -310,6 +332,12 @@ uppercase = true
 wait_time = 1.2
 one_shot = true
 
+[node name="HitMoment" type="Timer" parent="."]
+wait_time = 0.2
+one_shot = true
+
 [connection signal="health_change" from="." to="Camera2D/UI/HUD/Health_HUD/HealthBar" method="_on_Player_health_change"]
 [connection signal="timeout" from="shootDelay" to="." method="_on_shootDelay_timeout"]
+[connection signal="body_entered" from="hitArea" to="." method="_on_hitArea_body_entered"]
 [connection signal="timeout" from="MineBlock" to="." method="_on_MineBlock_timeout"]
+[connection signal="timeout" from="HitMoment" to="." method="_on_HitMoment_timeout"]

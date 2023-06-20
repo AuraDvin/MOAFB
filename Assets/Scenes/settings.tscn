@@ -1,0 +1,86 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Assets/Scenes/settings.gd" type="Script" id=1]
+[ext_resource path="res://Scripts/Menu/MenuTheme.tres" type="Theme" id=2]
+[ext_resource path="res://Scripts/Menu/ka1.ttf" type="DynamicFontData" id=3]
+
+[sub_resource type="DynamicFont" id=1]
+size = 128
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=3]
+size = 81
+use_filter = true
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 64
+use_filter = true
+font_data = ExtResource( 3 )
+
+[node name="settings" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 2 )
+script = ExtResource( 1 )
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 1280, 720 )
+color = Color( 0.277667, 0.153, 0.34, 1 )
+
+[node name="Title" type="Label" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -407.5
+margin_right = 407.5
+margin_bottom = 144.0
+custom_fonts/font = SubResource( 1 )
+text = "SETTINGS"
+uppercase = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Menu" type="VBoxContainer" parent="CanvasLayer"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -295.0
+margin_top = -89.0
+margin_right = 295.0
+margin_bottom = 277.0
+theme = ExtResource( 2 )
+
+[node name="PressButtonScreen" type="ColorRect" parent="CanvasLayer"]
+visible = false
+margin_right = 1283.0
+margin_bottom = 718.0
+color = Color( 0.0823529, 0.0235294, 0.105882, 0.815686 )
+
+[node name="Label" type="Label" parent="CanvasLayer/PressButtonScreen"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -439.0
+margin_top = -60.0
+margin_right = 439.0
+margin_bottom = 60.0
+theme = ExtResource( 2 )
+custom_fonts/font = SubResource( 3 )
+text = "PRESS A KEY NOW"
+
+[node name="Return" type="Button" parent="."]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -221.5
+margin_top = -117.0
+margin_right = 221.5
+custom_fonts/font = SubResource( 2 )
+text = "Go back"
+
+[connection signal="pressed" from="Return" to="." method="_on_Return_pressed"]

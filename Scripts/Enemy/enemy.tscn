@@ -157,15 +157,28 @@ one_shot = true
 wait_time = 2.0
 one_shot = true
 
-[node name="wall" type="RayCast2D" parent="." groups=["Enemy"]]
+[node name="wall" type="RayCast2D" parent="."]
 position = Vector2( -44, 72 )
 rotation = 1.5708
 enabled = true
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 
+[node name="GotHit" type="ColorRect" parent="."]
+visible = false
+margin_left = -58.0
+margin_top = -11.0
+margin_right = 43.0
+margin_bottom = 71.0
+color = Color( 0.968627, 0.239216, 0.239216, 0.560784 )
+
+[node name="HideGotHit" type="Timer" parent="GotHit"]
+wait_time = 0.2
+one_shot = true
+
 [connection signal="body_entered" from="playerCollision" to="." method="_on_playerCollision_body_entered"]
 [connection signal="body_entered" from="playerHitter" to="." method="_on_playerHitter_body_entered"]
 [connection signal="timeout" from="stopMoving" to="." method="_on_stopMoving_timeout"]
 [connection signal="timeout" from="hit" to="." method="_on_hit_timeout"]
 [connection signal="timeout" from="WaitBeforeHit" to="." method="_on_WaitBeforeHit_timeout"]
+[connection signal="timeout" from="GotHit/HideGotHit" to="." method="_on_HideGotHit_timeout"]

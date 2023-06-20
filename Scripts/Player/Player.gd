@@ -5,6 +5,7 @@ signal health_change(newHealth)
 signal move_smart_cursor(position, normal)
 signal cursor_visibility(yes)
 signal left_level
+signal deal_damage_to_enemy(value)
 
 const UP: Vector2 = Vector2(0, -1)
 const GRAVITY: int = 30
@@ -20,6 +21,7 @@ var health = 100
 var minerPoint = Vector2()
 var minerNormal = Vector2()
 var can_leave = false
+var can_hit = true
 # debug
 #var debug_sprite = preload("res://icon.png")
 
@@ -29,8 +31,15 @@ onready var mySprite = get_node("AnimatedSprite")
 onready var block_mining_timer = $MineBlock
 onready var smart_cursor_UI_label = $Camera2D/UI/HUD/smart_cursor_position
 onready var gold_counter_label = $Camera2D/UI/HUD/Gold_HUD/Gold_inventory
+onready var hit_timer = $HitMoment
+onready var hit_area = $hitArea
+
 
 func _ready():
+	for member in get_tree().get_nodes_in_group("Enemy"):
+#		print_debug(member)
+		member.connect("enemy_died", self, "_on_get_kill")
+		
 	mySprite.play("default")
 	emit_signal("health_change", health)
 	var _returns_from_connect = AutoLoad.connect("addedGold", self, "_on_Gold_updated")
@@ -73,7 +82,9 @@ func _physics_process(_delta):
 			emit_signal("move_smart_cursor", tile_location, normal)
 	elif mySprite.animation != "mineStone":
 		emit_signal("cursor_visibility", false)
-	if Input.is_action_just_pressed("mine"):
+	if Input.is_action_just_pressed("action_mine"):
+		hit_area.monitoring = true
+		hit_area.visible = true
 		mySprite.play("mineStone")
 		if $miner.is_colliding() and $miner.get_collider().is_in_group('tilemap'):
 			var point = $miner.get_collision_point()
@@ -82,8 +93,13 @@ func _physics_process(_delta):
 				block_mining_timer.start()
 				minerPoint = Vector2(point.x, point.y)
 				minerNormal = normal
-	elif not Input.is_action_pressed("mine") and mySprite.animation != "run":
+	elif not Input.is_action_pressed("action_mine") and mySprite.animation != "run":
 		mySprite.play("default")
+
+	if not Input.is_action_pressed("action_mine"):
+		hit_area.monitoring = false
+		hit_area.visible = false
+	
 	if Input.is_action_just_released("move_up"):
 		jumpCut()
 
@@ -189,3 +205,19 @@ func _on_enemy_dealDamage(value):
 func die_on_level():
 	emit_signal("left_level")
 	queue_free()
+
+
+func _on_HitMoment_timeout():
+	can_hit = true
+
+func _on_hitArea_body_entered(body):
+	if not body.is_in_group("Enemy") or not can_hit:
+		return
+#	print("opa moment :D")
+#	body.take_damage(50)
+	emit_signal("deal_damage_to_enemy", 60)
+	hit_timer.start()
+	can_hit = false
+	
+func _on_get_kill():
+	AutoLoad.addGold()

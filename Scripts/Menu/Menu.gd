@@ -42,11 +42,13 @@ func _on_Quit_Button_pressed():
 	get_tree().quit()
 
 func _on_Options_Button_pressed():
-	$Main.visible = false
-	$GameTitle.visible = false
-	$Main/CanvasLayer.visible = false
-	$Options.visible = true
-	emit_signal("go_to_options")
+	get_tree().change_scene("res://Assets/Scenes/settings.tscn")
+	pass
+#	$Main.visible = false
+#	$GameTitle.visible = false
+#	$Main/CanvasLayer.visible = false
+#	$Options.visible = true
+#	emit_signal("go_to_options")
 
 func _on_BackToMenu_pressed():
 	$Options.visible = false

@@ -1,6 +1,7 @@
 extends KinematicBody2D
 
 signal dealDamage(value)
+signal enemy_died
 
 const UP = Vector2(0, -1)
 const GRAVITY = 600.00
@@ -21,6 +22,7 @@ var position_old = Vector2(0, 0)
 var playerless = false
 var actual_position
 var climbing = false
+var health = 100
 
 onready var level_name = get_tree().get_current_scene().get_name()
 onready var player = get_tree().get_root().get_node_or_null("./" + level_name + "/Player")
@@ -33,6 +35,7 @@ func _ready():
 #	set_process(false)
 	actual_position = position
 	animation.play("walk")
+	player.connect("deal_damage_to_enemy", self, "take_damage")
 	#TODO: Navigation setup 
 #
 func _process(_delta):
@@ -69,6 +72,7 @@ func _physics_process(delta):
 			playerless = true
 		return
 	
+#	if not climbing:
 	move_man += make_path()
 	
 	if position_old == Vector2(0, 0):
@@ -83,10 +87,11 @@ func _physics_process(delta):
 		move_man += applyGravity(delta)
 #		pass
 #	if move_man.x > 0 and position_old.x < 0 or move_man.x < 0 and position_old.x > 0 : 
-	if not climbing and sign(move_man.x) != sign(position_old.x):
+#	if not climbing and sign(move_man.x) != sign(position_old.x):
+	if sign(move_man.x) != sign(position_old.x):
 		self.scale.x *= -1
-	elif climbing:
-		move_man.x *= sign(position_old.x)
+#	elif climbing:
+#		move_man.x *= sign(position_old.x)
 	position_old = move_man
 	move_man = move_and_slide(move_man, UP)
 
@@ -119,7 +124,17 @@ func applyGravity(_delta):
 		falling.y = MAXFALLSPD
 	return falling
 	
+func take_damage(value):
+	health -= value
+#	print(health)
+	if health <= 0: 
+		emit_signal("enemy_died")
+		self.queue_free()
+	$GotHit.visible = true
+	$GotHit/HideGotHit.start()
 	
+
+
 func detect_wall():
 	return (wall_detect.is_colliding() and wall_detect.get_collider().is_in_group('tilemap'))
 #	is_moving_left = player_location.x <= position.x 
@@ -150,7 +165,7 @@ func _on_playerCollision_body_entered(body):
 	if not body.is_in_group('player'):
 #		$playerCollision.call_deferred('monitoring', false)
 		return
-	print_debug('this is a test :D')
+#	print_debug('this is a test :D')
 	hit()
 #
 #func _on_stopMoving_timeout():
@@ -174,7 +189,7 @@ func _on_playerHitter_body_entered(body):
 	$WaitBeforeHit.start()
 	$playerHitter.call_deferred('set_monitoring', false)
 	animation.play("walk")
-	print_debug("Dealt damage to player ... me thinks")
+#	print_debug("Dealt damage to player ... me thinks")
 
 func _on_WaitBeforeHit_timeout():
 	$playerCollision.call_deferred('set_monitoring', true)
@@ -248,3 +263,7 @@ func _on_WaitBeforeHit_timeout():
 
 
 
+
+
+func _on_HideGotHit_timeout():
+	$GotHit.visible = false
