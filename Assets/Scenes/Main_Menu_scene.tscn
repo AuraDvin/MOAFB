@@ -75,7 +75,6 @@ tile_data = PoolIntArray( -131069, 0, 0, -131068, 0, 1, -131067, 0, 1, -131066, 
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( -12, 2 )
-current = true
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 position = Vector2( 74, -88 )
