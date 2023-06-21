@@ -94,12 +94,12 @@ func generate() -> void:
 			var value = simplex_noise.get_noise_2d(x, y)
 			if value < noise_treshold:
 				_set_autotile(x, y)
-				var tile_position = Vector2(x, y - 2) * 0.25 * tile_map.cell_size
-				if gold_locations.has(tile_position) and banana.size() < 20:
+				var tile_position = Vector2(x, y) * 0.25 * tile_map.cell_size
+				if gold_locations.has(tile_position) and banana.size() < 50:
 					var gold_ore_moment = Sprite.new()
 					var local = tile_map.to_local(tile_position)
 					var world = tile_map.map_to_world(local)
-					var global = tile_map.to_global(world)  + Vector2(0, 2 * tile_map.cell_size.y - 4)
+					var global = tile_map.to_global(world)  
 					
 					gold_ore_moment.name = str(global)
 					gold_ore_moment.scale *= 2
