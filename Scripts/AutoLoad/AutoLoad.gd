@@ -3,7 +3,7 @@ extends Node
 signal addedGold (amount)
 
 var doLog = false
-var gold = 0
+var gold = 200
 var spawnable_locations = []
 
 func _ready():

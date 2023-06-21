@@ -1,7 +1,5 @@
 extends Control
 
-signal go_to_options
-
 var last_mouse_position = Vector2.ZERO
 var pointer_invisible_timestamp = 0
 
@@ -42,7 +40,7 @@ func _on_Quit_Button_pressed():
 	get_tree().quit()
 
 func _on_Options_Button_pressed():
-	get_tree().change_scene("res://Assets/Scenes/settings.tscn")
+	var _scene_change_return = get_tree().change_scene("res://Assets/Scenes/settings.tscn")
 	pass
 #	$Main.visible = false
 #	$GameTitle.visible = false

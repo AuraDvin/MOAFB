@@ -103,7 +103,8 @@ func place_door():
 
 func _on_Player_left_level():
 	get_tree().get_root().get_node(\"Door\").queue_free()
-	get_tree().change_scene(\"res://Assets/Scenes/End Level.tscn\")
+	var _change_scene_return = get_tree().change_scene(\"res://Assets/Scenes/End Level.tscn\")
+	
 "
 
 [sub_resource type="ShaderMaterial" id=4]

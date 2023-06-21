@@ -112,7 +112,7 @@ func find_player():
 	player_location = player.position
 	
 	var distance_to_player = position.distance_to(player_location)
-	return not distance_to_player > 700
+	return not (distance_to_player > 200 or distance_to_player < 5 )
 #	if distance > 700:
 #		return false
 	

@@ -18,7 +18,7 @@ onready var margin_container = $CanvasLayer/CenterContainer
 func _ready():
 	gold = str(AutoLoad.getGold())
 	gold_num = AutoLoad.getGold()
-	
+
 
 func _process(delta):
 	time += delta * 1000
@@ -37,6 +37,7 @@ func _process(delta):
 		done = true
 	back_button.visible = true
 	set_process(false)
+	AutoLoad.gold = 0
 
 func _on_End_Level_finished_writing():
 	timer.start()
@@ -52,4 +53,4 @@ func _on_Timer_timeout():
 
 
 func _on_Back_to_main_pressed():
-	get_tree().change_scene("res://Assets/Scenes/Main_Menu_scene.tscn")
+	var _on_scene_change_return = get_tree().change_scene("res://Assets/Scenes/Main_Menu_scene.tscn")

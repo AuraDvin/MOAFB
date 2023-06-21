@@ -37,7 +37,6 @@ onready var hit_area = $hitArea
 
 func _ready():
 	for member in get_tree().get_nodes_in_group("Enemy"):
-#		print_debug(member)
 		member.connect("enemy_died", self, "_on_get_kill")
 		
 	mySprite.play("default")
